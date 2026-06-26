@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import {
-  Fire, Trophy, CheckCircle, HandWaving, Heart, Medal,
+  Fire, CheckCircle, HandWaving, Heart,
   CalendarCheck, BookOpenText, ClipboardText, ChatCircleText,
   SignOut, CaretRight, Leaf, LightningA,
 } from '@phosphor-icons/react'
@@ -203,144 +203,116 @@ export default function DashboardClient({
       />
 
       <div className="space-y-3">
-        <Link href="/reuniao" className={`task-card ${reunioesHoje > 0 ? 'task-card--done' : ''}`}>
-          <div className="task-icon-circle" style={{
-            background: reunioesHoje > 0 ? 'rgba(28,176,246,0.15)' : 'rgba(255,150,0,0.12)',
-            color: reunioesHoje > 0 ? 'var(--duo-blue)' : 'var(--duo-orange)',
-          }}>
-            <CalendarCheck size={26} weight="duotone" />
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: reunioesHoje > 0 ? 'var(--duo-blue)' : 'var(--text-1)' }}>
-              Fui à reunião
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
-              {reunioesHoje > 0 ? `${reunioesHoje} reunião(ões) hoje` : 'Registre sua presença'}
-            </div>
-          </div>
-          {reunioesHoje > 0
-            ? <CheckCircle size={22} weight="bold" color="var(--duo-blue)" />
-            : <><span className="badge badge-orange">+30 XP</span><CaretRight size={16} weight="bold" color="var(--duo-gray)" /></>
-          }
-        </Link>
-
-        <Link href="/sohoje" className={`task-card ${leuHoje ? 'task-card--done' : ''}`}>
-          <div className="task-icon-circle" style={{
-            background: leuHoje ? 'rgba(28,176,246,0.15)' : 'rgba(206,130,255,0.12)',
-            color: leuHoje ? 'var(--duo-blue)' : 'var(--duo-purple)',
-          }}>
-            <BookOpenText size={26} weight="duotone" />
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: leuHoje ? 'var(--duo-blue)' : 'var(--text-1)' }}>
-              Só por hoje
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
-              {leuHoje ? 'Leitura concluída hoje' : 'Leia o texto do dia'}
-            </div>
-          </div>
-          {leuHoje
-            ? <CheckCircle size={22} weight="bold" color="var(--duo-blue)" />
-            : <><span className="badge badge-purple">+20 XP</span><CaretRight size={16} weight="bold" color="var(--duo-gray)" /></>
-          }
-        </Link>
-
-        <Link href="/decimo-passo" className={`task-card ${inventarioHoje ? 'task-card--done' : ''}`}>
-          <div className="task-icon-circle" style={{
-            background: inventarioHoje ? 'rgba(28,176,246,0.15)' : 'rgba(88,204,2,0.12)',
-            color: inventarioHoje ? 'var(--duo-blue)' : 'var(--duo-green)',
-          }}>
-            <ClipboardText size={26} weight="duotone" />
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: inventarioHoje ? 'var(--duo-blue)' : 'var(--text-1)' }}>
-              10° Passo
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
-              {inventarioHoje ? 'Inventário feito hoje' : 'Inventário pessoal diário'}
-            </div>
-          </div>
-          {inventarioHoje
-            ? <CheckCircle size={22} weight="bold" color="var(--duo-blue)" />
-            : <><span className="badge badge-green">+25 XP</span><CaretRight size={16} weight="bold" color="var(--duo-gray)" /></>
-          }
-        </Link>
-      </div>
-
-      {/* ── Streak + Recorde ───────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <div className="card" style={{
-          background: streak > 0 ? 'var(--streak-card-bg)' : undefined,
-          border: `2px solid ${streak > 0 ? 'rgba(255,150,0,0.35)' : 'var(--border)'}`,
-          textAlign: 'center', padding: '1rem',
-        }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: '50%',
-            background: streak > 0 ? 'rgba(255,150,0,0.15)' : 'var(--bg-card-2)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 0.5rem',
-            color: streak > 0 ? 'var(--duo-orange)' : 'var(--duo-gray)',
-          }}>
-            <Fire size={24} weight="duotone" />
-          </div>
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: streak > 0 ? 'var(--duo-orange)' : 'var(--duo-gray)', lineHeight: 1 }}>
-            {streak}
-          </div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--duo-gray)', marginTop: '0.25rem', fontWeight: 700 }}>
-            {streak > 0 ? 'dias seguidos' : 'Comece hoje!'}
-          </div>
-        </div>
-
-        <div className="card" style={{
-          background: 'var(--trophy-card-bg)',
-          border: '2px solid rgba(234,179,8,0.3)',
-          textAlign: 'center', padding: '1rem',
-        }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: '50%',
-            background: 'rgba(217,119,6,0.12)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 0.5rem', color: '#d97706',
-          }}>
-            <Trophy size={24} weight="duotone" />
-          </div>
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: '#d97706', lineHeight: 1 }}>{streakMax}</div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--duo-gray)', marginTop: '0.25rem', fontWeight: 700 }}>
-            recorde pessoal
-          </div>
-          {streak === streakMax && streak > 0 && (
-            <div style={{ marginTop: '0.375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, color: '#d97706', fontWeight: 800, fontSize: '0.7rem' }}>
-              <Medal size={14} weight="fill" />
-              Recorde atual!
-            </div>
-          )}
-        </div>
+        <ActivityCard
+          href="/reuniao"
+          icon={<CalendarCheck size={28} weight="duotone" />}
+          label="Fui à reunião"
+          sublabel={reunioesHoje > 0 ? `${reunioesHoje} reunião(ões) hoje` : 'Registre sua presença'}
+          xp="+30 XP"
+          done={reunioesHoje > 0}
+          accent="#FF9600"
+          accentDark="#CC7800"
+          accentBg="rgba(255,150,0,0.12)"
+        />
+        <ActivityCard
+          href="/sohoje"
+          icon={<BookOpenText size={28} weight="duotone" />}
+          label="Só por hoje"
+          sublabel={leuHoje ? 'Leitura concluída hoje' : 'Leia o texto do dia'}
+          xp="+20 XP"
+          done={leuHoje}
+          accent="#CE82FF"
+          accentDark="#A568CC"
+          accentBg="rgba(206,130,255,0.12)"
+        />
+        <ActivityCard
+          href="/decimo-passo"
+          icon={<ClipboardText size={28} weight="duotone" />}
+          label="Inventário diário"
+          sublabel={inventarioHoje ? 'Inventário feito hoje' : 'Inventário pessoal diário'}
+          xp="+25 XP"
+          done={inventarioHoje}
+          accent="#58CC02"
+          accentDark="#58A700"
+          accentBg="rgba(88,204,2,0.12)"
+        />
       </div>
 
       {/* ── Guia dos Passos ────────────────────────────── */}
       <SectionHeader label="Guia dos Passos" />
 
-      <Link href="/passos" className="task-card task-card--special">
-        <div className="task-icon-circle" style={{ background: 'rgba(216,79,158,0.15)', color: 'var(--duo-pink)' }}>
-          <ChatCircleText size={26} weight="duotone" />
-        </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--duo-pink)' }}>
-            Guia dos 12 Passos
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
-            Responda perguntas e ganhe XP
-          </div>
-        </div>
-        <span className="badge badge-pink">+15 XP</span>
-        <CaretRight size={16} weight="bold" color="var(--duo-pink)" />
-      </Link>
+      <ActivityCard
+        href="/passos"
+        icon={<ChatCircleText size={28} weight="duotone" />}
+        label="Guia dos passos"
+        sublabel="Responda perguntas e ganhe XP"
+        xp="+15 XP"
+        done={false}
+        accent="#D84F9E"
+        accentDark="#ac016a"
+        accentBg="rgba(216,79,158,0.12)"
+      />
 
     </div>
   )
 }
 
 /* ── Sub-components ─────────────────────────────────────── */
+
+function ActivityCard({
+  href, icon, label, sublabel, xp, done, accent, accentDark, accentBg,
+}: {
+  href: string; icon: React.ReactNode; label: string; sublabel: string
+  xp: string; done: boolean; accent: string; accentDark: string; accentBg: string
+}) {
+  const bg = done ? accentBg : 'var(--bg-card)'
+  const border = done ? accent : 'var(--border)'
+  const shadowColor = done ? accentDark : 'var(--border)'
+
+  return (
+    <Link href={href} style={{
+      display: 'flex', flexDirection: 'row', alignItems: 'center',
+      padding: '14px 16px', gap: 14, borderRadius: 16,
+      background: bg,
+      border: `2.5px solid ${border}`,
+      boxShadow: `0 4px 0 ${shadowColor}`,
+      textDecoration: 'none', width: '100%', boxSizing: 'border-box',
+      transition: 'transform 0.1s, box-shadow 0.1s',
+    }}
+    onMouseDown={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(2px)'; (e.currentTarget as HTMLElement).style.boxShadow = `0 2px 0 ${shadowColor}` }}
+    onMouseUp={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 0 ${shadowColor}` }}
+    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 0 ${shadowColor}` }}
+    >
+      <div style={{
+        width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+        background: done ? `${accent}25` : accentBg,
+        color: done ? accent : accent,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        {icon}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 800, fontSize: '1rem', color: done ? accent : 'var(--text-1)', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+          {label}
+        </div>
+        <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.25rem', fontWeight: 600 }}>
+          {sublabel}
+        </div>
+      </div>
+      {done
+        ? <div style={{ width: 28, height: 28, borderRadius: '50%', background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+              <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        : <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <span style={{ background: `${accent}20`, color: accent, padding: '3px 8px', borderRadius: 99, fontSize: '0.7rem', fontWeight: 800 }}>{xp}</span>
+            <CaretRight size={16} weight="bold" color="var(--duo-gray)" />
+          </div>
+      }
+    </Link>
+  )
+}
 
 function SectionHeader({ label, right }: { label: string; right?: React.ReactNode }) {
   return (
