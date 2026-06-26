@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { MessageSquare, ChevronDown, ChevronUp, Send } from 'lucide-react'
+import { ChatCircleText, CaretDown, CaretUp, PaperPlaneTilt, CheckCircle } from '@phosphor-icons/react'
 import type { PassoPergunta, RespostaPasso } from '@/lib/types'
 
 interface Props {
@@ -37,7 +37,6 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
       setRespostas(prev => [data, ...prev])
       setTextosResposta(prev => ({ ...prev, [perguntaId]: '' }))
 
-      // Atualizar pontuação
       const hoje = new Date().toISOString().split('T')[0]
       const { data: pont } = await supabase.from('pontuacao_diaria')
         .select('*').eq('usuario_id', userId).eq('data', hoje).single()
@@ -66,41 +65,43 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold mb-0.5" style={{ color: 'rgba(241,245,249,0.4)' }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
             GUIA DOS PASSOS
           </p>
-          <h1 className="text-2xl font-black text-white">Os 12 Passos</h1>
+          <h1 style={{ color: 'var(--text-1)', fontSize: '1.5rem', fontWeight: 900 }}>Os 12 Passos</h1>
         </div>
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-             style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.3), rgba(52,211,153,0.15))' }}>
-          <MessageSquare size={22} color="#34d399" />
+             style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
+          <ChatCircleText size={22} weight="duotone" color="white" />
         </div>
       </div>
 
       {/* Stats */}
-      <div className="card-rad flex items-center justify-between">
+      <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
         <div className="text-center">
-          <div className="text-2xl font-black text-white">{totalRespostas}</div>
-          <div className="text-xs" style={{ color: 'rgba(241,245,249,0.4)' }}>respostas</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text-1)' }}>{totalRespostas}</div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 700 }}>respostas</div>
         </div>
+        <div style={{ width: 1, height: 40, background: 'var(--border)' }} />
         <div className="text-center">
-          <div className="text-2xl font-black" style={{ color: '#34d399' }}>
+          <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--success)' }}>
             {perguntasRespondidas.size}
           </div>
-          <div className="text-xs" style={{ color: 'rgba(241,245,249,0.4)' }}>perguntas feitas</div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 700 }}>perguntas feitas</div>
         </div>
+        <div style={{ width: 1, height: 40, background: 'var(--border)' }} />
         <div className="text-center">
-          <div className="text-2xl font-black" style={{ color: '#00c3ff' }}>
+          <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--accent)' }}>
             {totalRespostas * 15}
           </div>
-          <div className="text-xs" style={{ color: 'rgba(241,245,249,0.4)' }}>pontos ganhos</div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 700 }}>pontos ganhos</div>
         </div>
       </div>
 
       {celebrar && (
-        <div className="text-center py-3 rounded-2xl"
-             style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)' }}>
-          <span className="font-bold text-sm" style={{ color: '#34d399' }}>
+        <div className="pop-in text-center py-3 rounded-2xl"
+             style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}>
+          <span style={{ fontWeight: 800, fontSize: '0.875rem', color: 'var(--success)' }}>
             ✨ +15 pontos! Continue respondendo!
           </span>
         </div>
@@ -112,53 +113,64 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
           const perguntasDoPasso = perguntas.filter(p => p.passo === passo)
           const aberto = passoAtivo === passo
           const respondidas = perguntasDoPasso.filter(p => perguntasRespondidas.has(p.id)).length
+          const completo = respondidas === perguntasDoPasso.length
 
           return (
-            <div key={passo} className="card-rad overflow-hidden">
+            <div key={passo} className="card" style={{ padding: 0, overflow: 'hidden' }}>
               <button
                 onClick={() => setPassoAtivo(aberto ? null : passo)}
-                className="w-full flex items-center justify-between text-left">
+                className="w-full flex items-center justify-between text-left"
+                style={{ padding: '1.25rem', background: aberto ? 'var(--bg-card-2)' : 'transparent' }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0"
-                       style={{
-                         background: respondidas === perguntasDoPasso.length
-                           ? 'linear-gradient(135deg, #34d399, #10b981)'
-                           : 'rgba(0,195,255,0.15)',
-                         color: respondidas === perguntasDoPasso.length ? 'white' : '#00c3ff',
-                       }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 12,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 900, fontSize: '0.875rem', flexShrink: 0,
+                    background: completo
+                      ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+                      : 'rgba(0,157,255,0.15)',
+                    color: completo ? 'white' : 'var(--accent)',
+                  }}>
                     {passo}
                   </div>
                   <div>
-                    <div className="font-bold text-sm text-white">Passo {passo}</div>
-                    <div className="text-xs" style={{ color: 'rgba(241,245,249,0.4)' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-1)' }}>Passo {passo}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
                       {respondidas}/{perguntasDoPasso.length} perguntas respondidas
                     </div>
                   </div>
                 </div>
-                {aberto ? (
-                  <ChevronUp size={18} color="rgba(241,245,249,0.4)" />
-                ) : (
-                  <ChevronDown size={18} color="rgba(241,245,249,0.4)" />
-                )}
+                <div style={{ color: 'var(--text-3)' }}>
+                  {aberto
+                    ? <CaretUp size={18} weight="bold" />
+                    : <CaretDown size={18} weight="bold" />
+                  }
+                </div>
               </button>
 
               {aberto && (
-                <div className="mt-4 space-y-4 pt-4 border-t"
-                     style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                <div className="space-y-4" style={{
+                  padding: '0 1.25rem 1.25rem',
+                  borderTop: '1.5px solid var(--border)',
+                  paddingTop: '1.25rem',
+                }}>
                   {perguntasDoPasso.map(pergunta => {
                     const jaRespondeu = perguntasRespondidas.has(pergunta.id)
                     const ultimaResposta = respostas.find(r => r.pergunta_id === pergunta.id)
 
                     return (
                       <div key={pergunta.id} className="space-y-2">
-                        <p className="text-sm text-white leading-relaxed">
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-1)', lineHeight: '1.6' }}>
                           {pergunta.pergunta}
                         </p>
 
                         {ultimaResposta && (
-                          <div className="rounded-xl p-3 text-xs"
-                               style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(241,245,249,0.6)' }}>
-                            <span className="font-semibold" style={{ color: '#34d399' }}>
+                          <div style={{
+                            borderRadius: 12, padding: '0.75rem',
+                            background: 'var(--bg-card-2)', fontSize: '0.8rem',
+                            color: 'var(--text-2)',
+                          }}>
+                            <span style={{ fontWeight: 800, color: 'var(--success)' }}>
                               Sua última resposta:{' '}
                             </span>
                             {ultimaResposta.resposta}
@@ -167,7 +179,7 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
 
                         <div className="flex gap-2">
                           <textarea
-                            className="input-rad flex-1"
+                            className="input-field flex-1"
                             rows={2}
                             placeholder={jaRespondeu ? 'Responder novamente...' : 'Escreva sua resposta...'}
                             value={textosResposta[pergunta.id] ?? ''}
@@ -182,10 +194,13 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
                             className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 self-end transition-all"
                             style={{
                               background: textosResposta[pergunta.id]?.trim()
-                                ? 'linear-gradient(135deg, #0445de, #00c3ff)'
-                                : 'rgba(255,255,255,0.06)',
+                                ? 'var(--accent-grad)'
+                                : 'var(--bg-card-2)',
+                              border: '1.5px solid var(--border)',
+                              color: textosResposta[pergunta.id]?.trim() ? 'white' : 'var(--text-3)',
+                              cursor: textosResposta[pergunta.id]?.trim() ? 'pointer' : 'not-allowed',
                             }}>
-                            <Send size={16} color="white" />
+                            <PaperPlaneTilt size={16} weight="bold" />
                           </button>
                         </div>
                       </div>

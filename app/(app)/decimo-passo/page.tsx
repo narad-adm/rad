@@ -2,13 +2,13 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { ClipboardList, CheckCircle } from 'lucide-react'
+import { ClipboardText, CheckCircle } from '@phosphor-icons/react'
 
 const PERGUNTAS = [
-  { key: 'honestidade',   titulo: '🔍 Honestidade',     pergunta: 'Onde fui honesto hoje? E onde fui desonesto?' },
-  { key: 'admissoes',     titulo: '🙏 Admissões',        pergunta: 'O que preciso admitir, reparar ou melhorar?' },
-  { key: 'contribuicoes', titulo: '💙 Contribuições',    pergunta: 'Contribuí positivamente para mim e para os outros? E negativamente?' },
-  { key: 'doenca',        titulo: '⚠️ Minha doença',     pergunta: 'Tive vontade de usar? Minha doença se manifestou de alguma forma hoje? Como?' },
+  { key: 'honestidade',   titulo: '🔍 Honestidade',      pergunta: 'Onde fui honesto hoje? E onde fui desonesto?' },
+  { key: 'admissoes',     titulo: '🙏 Admissões',         pergunta: 'O que preciso admitir, reparar ou melhorar?' },
+  { key: 'contribuicoes', titulo: '💙 Contribuições',     pergunta: 'Contribuí positivamente para mim e para os outros? E negativamente?' },
+  { key: 'doenca',        titulo: '⚠️ Minha doença',      pergunta: 'Tive vontade de usar? Minha doença se manifestou de alguma forma hoje? Como?' },
   { key: 'acoes_limpeza', titulo: '✨ Minha recuperação', pergunta: 'O que fiz hoje para me manter limpo(a)?' },
 ]
 
@@ -55,13 +55,9 @@ export default function DecimoPasso() {
     const hoje = new Date().toISOString().split('T')[0]
 
     await supabase.from('inventarios_diarios').insert({
-      usuario_id: user.id,
-      data: hoje,
-      ...respostas,
-      pontos_ganhos: 25,
+      usuario_id: user.id, data: hoje, ...respostas, pontos_ganhos: 25,
     })
 
-    // Atualizar pontuação
     const { data } = await supabase.from('pontuacao_diaria')
       .select('*').eq('usuario_id', user.id).eq('data', hoje).single()
 
@@ -73,8 +69,7 @@ export default function DecimoPasso() {
       }).eq('id', data.id)
     } else {
       await supabase.from('pontuacao_diaria').insert({
-        usuario_id: user.id, data: hoje,
-        pontos_total: 25, inventarios: 1,
+        usuario_id: user.id, data: hoje, pontos_total: 25, inventarios: 1,
       })
     }
 
@@ -91,7 +86,7 @@ export default function DecimoPasso() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="text-4xl mb-3 animate-pulse">📝</div>
-          <p style={{ color: 'rgba(241,245,249,0.4)' }}>Carregando...</p>
+          <p style={{ color: 'var(--text-3)' }}>Carregando...</p>
         </div>
       </div>
     )
@@ -101,25 +96,25 @@ export default function DecimoPasso() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold mb-0.5" style={{ color: 'rgba(241,245,249,0.4)' }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
             INVENTÁRIO DIÁRIO
           </p>
-          <h1 className="text-2xl font-black text-white">10° Passo</h1>
-          <p className="text-sm mt-0.5" style={{ color: 'rgba(241,245,249,0.5)' }}>
+          <h1 style={{ color: 'var(--text-1)', fontSize: '1.5rem', fontWeight: 900 }}>10° Passo</h1>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.125rem' }}>
             Continuamos a fazer o inventário pessoal
           </p>
         </div>
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-             style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.3), rgba(167,139,250,0.15))' }}>
-          <ClipboardList size={22} color="#a78bfa" />
+             style={{ background: 'linear-gradient(135deg, #8a81e5, #b280e6)' }}>
+          <ClipboardText size={22} weight="duotone" color="white" />
         </div>
       </div>
 
       {celebrar && (
-        <div className="text-center py-3 rounded-2xl"
-             style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)' }}>
+        <div className="pop-in text-center py-3 rounded-2xl"
+             style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}>
           <span className="text-2xl">🌟</span>
-          <span className="text-sm ml-2 font-bold" style={{ color: '#34d399' }}>
+          <span className="text-sm ml-2 font-bold" style={{ color: 'var(--success)' }}>
             +25 pontos! Inventário feito!
           </span>
         </div>
@@ -127,13 +122,13 @@ export default function DecimoPasso() {
 
       <div className="space-y-4">
         {PERGUNTAS.map(({ key, titulo, pergunta }) => (
-          <div key={key} className="card-rad space-y-3">
+          <div key={key} className="card space-y-3">
             <div>
-              <p className="font-bold text-sm text-white">{titulo}</p>
-              <p className="text-xs mt-0.5" style={{ color: 'rgba(241,245,249,0.5)' }}>{pergunta}</p>
+              <p style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-1)' }}>{titulo}</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>{pergunta}</p>
             </div>
             <textarea
-              className="input-rad"
+              className="input-field"
               rows={3}
               placeholder="Escreva aqui sua reflexão..."
               value={respostas[key]}
@@ -147,14 +142,14 @@ export default function DecimoPasso() {
 
       {jaFez ? (
         <div className="flex items-center justify-center gap-2 py-4 rounded-2xl"
-             style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)' }}>
-          <CheckCircle size={20} color="#34d399" />
-          <span className="font-semibold text-sm" style={{ color: '#34d399' }}>
+             style={{ background: 'rgba(34,197,94,0.1)', border: '1.5px solid rgba(34,197,94,0.2)' }}>
+          <CheckCircle size={20} weight="bold" color="#22c55e" />
+          <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--success)' }}>
             Inventário de hoje concluído!
           </span>
         </div>
       ) : (
-        <button onClick={handleSalvar} disabled={salvando || !temAlgumaResposta} className="btn-rad">
+        <button onClick={handleSalvar} disabled={salvando || !temAlgumaResposta} className="btn-primary">
           {salvando ? 'Salvando...' : '✓ Salvar inventário (+25 pts)'}
         </button>
       )}

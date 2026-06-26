@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { Eye, EyeOff, Waves } from 'lucide-react'
+import { Eye, EyeSlash, Waves } from '@phosphor-icons/react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -16,9 +16,7 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setErro('')
-    const { error } = await supabase.auth.signInWithPassword({
-      email, password: senha
-    })
+    const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
     if (error) {
       setErro('E-mail ou senha incorretos.')
       setLoading(false)
@@ -29,30 +27,32 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
-         style={{ background: 'linear-gradient(180deg, #0a0e1a 0%, #0d1530 100%)' }}>
+         style={{ background: 'var(--bg)' }}>
 
       {/* Logo */}
       <div className="text-center mb-10">
         <div className="w-20 h-20 rounded-3xl mx-auto mb-4 flex items-center justify-center"
-             style={{ background: 'linear-gradient(135deg, #0445de, #00c3ff)', boxShadow: '0 8px 32px rgba(4,69,222,0.4)' }}>
-          <Waves size={36} color="white" />
+             style={{ background: 'var(--accent-grad)', boxShadow: '0 8px 32px rgba(0,157,255,0.35)' }}>
+          <Waves size={36} weight="duotone" color="white" />
         </div>
-        <h1 className="text-3xl font-bold text-white mb-1">RAD</h1>
-        <p className="text-sm" style={{ color: 'rgba(241,245,249,0.5)' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-1)' }}>RAD</h1>
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>
           Recuperação Ativa Diária
         </p>
       </div>
 
       {/* Card */}
-      <div className="w-full max-w-sm card-rad">
-        <h2 className="text-xl font-bold text-white mb-6">Entrar</h2>
+      <div className="card w-full" style={{ maxWidth: 400 }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-1)', marginBottom: '1.5rem' }}>
+          Entrar
+        </h2>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="label-rad">E-mail</label>
+            <label className="label">E-mail</label>
             <input
               type="email"
-              className="input-rad"
+              className="input-field"
               placeholder="seu@email.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -62,11 +62,11 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="label-rad">Senha</label>
+            <label className="label">Senha</label>
             <div className="relative">
               <input
                 type={showSenha ? 'text' : 'password'}
-                className="input-rad"
+                className="input-field"
                 placeholder="••••••••"
                 value={senha}
                 onChange={e => setSenha(e.target.value)}
@@ -77,33 +77,36 @@ export default function LoginPage() {
               <button type="button"
                 onClick={() => setShowSenha(!showSenha)}
                 className="absolute right-3 top-1/2 -translate-y-1/2"
-                style={{ color: 'rgba(241,245,249,0.4)' }}>
-                {showSenha ? <EyeOff size={18} /> : <Eye size={18} />}
+                style={{ color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                {showSenha ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
               </button>
             </div>
           </div>
 
           {erro && (
-            <div className="text-sm rounded-xl px-4 py-3"
-                 style={{ background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
+            <div style={{
+              background: 'rgba(239,68,68,0.1)', color: '#ef4444',
+              border: '1px solid rgba(239,68,68,0.2)',
+              borderRadius: 12, padding: '0.75rem 1rem', fontSize: '0.875rem',
+            }}>
               {erro}
             </div>
           )}
 
-          <button type="submit" disabled={loading} className="btn-rad mt-2">
+          <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '0.5rem' }}>
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
-        <p className="text-center text-sm mt-6" style={{ color: 'rgba(241,245,249,0.4)' }}>
+        <p className="text-center text-sm mt-6" style={{ color: 'var(--text-3)' }}>
           Ainda não tem conta?{' '}
-          <Link href="/cadastro" style={{ color: '#00c3ff', fontWeight: 600 }}>
+          <Link href="/cadastro" style={{ color: 'var(--accent)', fontWeight: 800, textDecoration: 'none' }}>
             Cadastre-se
           </Link>
         </p>
       </div>
 
-      <p className="text-center text-xs mt-8" style={{ color: 'rgba(241,245,249,0.2)' }}>
+      <p className="text-center text-xs mt-8" style={{ color: 'var(--text-3)' }}>
         Narcóticos Anônimos • Só por hoje
       </p>
     </div>

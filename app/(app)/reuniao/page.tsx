@@ -2,11 +2,19 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { CheckCircle, Users, Layers, BookOpen, CalendarDays, Book, Star, Circle } from 'lucide-react'
+import {
+  CheckCircle, UsersFour, Rows, BookOpenText, CalendarDots, Books, Star, Circle,
+} from '@phosphor-icons/react'
 import type { TipoReuniao } from '@/lib/types'
 
-const ICONES: Record<string, any> = {
-  Users, Layers, BookOpen, CalendarDays, Book, Star, Circle
+const ICONES: Record<string, React.ComponentType<any>> = {
+  Users: UsersFour,
+  Layers: Rows,
+  BookOpen: BookOpenText,
+  CalendarDays: CalendarDots,
+  Book: Books,
+  Star: Star,
+  Circle: Circle,
 }
 
 export default function ReuniaoPage() {
@@ -35,16 +43,13 @@ export default function ReuniaoPage() {
 
     const hoje = new Date().toISOString().split('T')[0]
     const hora = new Date().toTimeString().slice(0, 5)
-
-    // Bônus de resistência: foi mas não queria (nota < 5)
     const bonus = notaQuerer < 5 ? 20 : 0
     const pontos = tipoSelecionado.pontos + bonus
 
     const { error } = await supabase.from('checkins_reuniao').insert({
       usuario_id: user.id,
       tipo_reuniao_id: tipoSelecionado.id,
-      data: hoje,
-      hora,
+      data: hoje, hora,
       nota_querer: notaQuerer,
       nota_beneficio: notaBeneficio,
       observacao: observacao.trim() || null,
@@ -52,7 +57,6 @@ export default function ReuniaoPage() {
     })
 
     if (!error) {
-      // Atualizar pontuação diária
       await atualizarPontuacao(user.id, hoje, pontos)
       setPontosGanhos(pontos)
       setEtapa('sucesso')
@@ -72,14 +76,11 @@ export default function ReuniaoPage() {
       }).eq('id', data.id)
     } else {
       await supabase.from('pontuacao_diaria').insert({
-        usuario_id: userId,
-        data: hoje,
-        pontos_total: Math.min(100, pontos),
-        reunioes: 1,
+        usuario_id: userId, data: hoje,
+        pontos_total: Math.min(100, pontos), reunioes: 1,
       })
     }
 
-    // Atualizar streak
     await atualizarStreak(userId, hoje)
   }
 
@@ -108,25 +109,28 @@ export default function ReuniaoPage() {
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-6">
         <div className="text-6xl animate-bounce">🎉</div>
         <div>
-          <h2 className="text-2xl font-black text-white mb-2">Check-in registrado!</h2>
-          <p className="text-sm" style={{ color: 'rgba(241,245,249,0.5)' }}>
-            {tipoSelecionado?.nome}
-          </p>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)', marginBottom: '0.5rem' }}>
+            Check-in registrado!
+          </h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-2)' }}>{tipoSelecionado?.nome}</p>
         </div>
-        <div className="card-rad-glow text-center px-8 py-6">
-          <div className="text-4xl font-black mb-1" style={{ color: '#00c3ff' }}>
+        <div className="card pop-in text-center" style={{ padding: '2rem 3rem' }}>
+          <div style={{
+            fontSize: '3rem', fontWeight: 900, lineHeight: 1,
+            background: 'var(--accent-grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          }}>
             +{pontosGanhos}
           </div>
-          <div className="text-sm" style={{ color: 'rgba(241,245,249,0.5)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.5rem' }}>
             pontos ganhos hoje
-            {pontosGanhos > tipoSelecionado!.pontos && (
-              <div className="text-xs mt-1" style={{ color: '#fbbf24' }}>
-                🔥 +20 bônus por ter ido mesmo sem querer!
-              </div>
-            )}
           </div>
+          {pontosGanhos > tipoSelecionado!.pontos && (
+            <div className="badge badge-yellow" style={{ marginTop: '0.75rem' }}>
+              🔥 +20 bônus por ter ido mesmo sem querer!
+            </div>
+          )}
         </div>
-        <button onClick={() => router.push('/dashboard')} className="btn-rad" style={{ maxWidth: '280px' }}>
+        <button onClick={() => router.push('/dashboard')} className="btn-primary" style={{ maxWidth: 280 }}>
           Voltar para o início
         </button>
       </div>
@@ -139,34 +143,33 @@ export default function ReuniaoPage() {
         <div>
           <button onClick={() => setEtapa('tipo')}
             className="text-sm mb-4 flex items-center gap-1"
-            style={{ color: 'rgba(241,245,249,0.4)' }}>
+            style={{ color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
             ← Voltar
           </button>
-          <h1 className="text-2xl font-black text-white">Como foi a reunião?</h1>
-          <p className="text-sm mt-1" style={{ color: 'rgba(241,245,249,0.5)' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)' }}>Como foi a reunião?</h1>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>
             {tipoSelecionado?.nome}
           </p>
         </div>
 
-        <div className="card-rad space-y-6">
+        <div className="card space-y-6">
           <div>
-            <label className="label-rad mb-3 block">
+            <label className="label" style={{ marginBottom: '0.75rem', display: 'block' }}>
               O quanto você queria estar lá?
             </label>
             <NotaSlider valor={notaQuerer} onChange={setNotaQuerer}
               labelBaixo="Não queria" labelAlto="Queria muito" />
             {notaQuerer < 5 && (
-              <div className="mt-2 text-xs rounded-lg px-3 py-2"
-                   style={{ background: 'rgba(251,191,36,0.1)', color: '#fbbf24' }}>
+              <div className="mt-2 badge badge-yellow" style={{ display: 'inline-flex', padding: '0.5rem 0.75rem' }}>
                 🔥 Bônus de +20 pts por ter ido mesmo sem querer!
               </div>
             )}
           </div>
 
-          <div className="h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+          <div style={{ height: 1, background: 'var(--border)' }} />
 
           <div>
-            <label className="label-rad mb-3 block">
+            <label className="label" style={{ marginBottom: '0.75rem', display: 'block' }}>
               O quanto a reunião fez bem para você?
             </label>
             <NotaSlider valor={notaBeneficio} onChange={setNotaBeneficio}
@@ -174,19 +177,19 @@ export default function ReuniaoPage() {
           </div>
         </div>
 
-        <div className="card-rad">
-          <label className="label-rad">Observações (opcional)</label>
+        <div className="card">
+          <label className="label">Observações (opcional)</label>
           <textarea
-            className="input-rad mt-1"
+            className="input-field"
             rows={3}
             placeholder="O que aconteceu de marcante nessa reunião?"
             value={observacao}
             onChange={e => setObservacao(e.target.value)}
-            style={{ resize: 'none' }}
+            style={{ resize: 'none', marginTop: '0.25rem' }}
           />
         </div>
 
-        <button onClick={handleRegistrar} disabled={loading} className="btn-rad">
+        <button onClick={handleRegistrar} disabled={loading} className="btn-primary">
           {loading ? 'Registrando...' : `Registrar check-in (+${tipoSelecionado!.pontos + (notaQuerer < 5 ? 20 : 0)} pts)`}
         </button>
       </div>
@@ -196,8 +199,8 @@ export default function ReuniaoPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-white">Fui à reunião! 🤝</h1>
-        <p className="text-sm mt-1" style={{ color: 'rgba(241,245,249,0.5)' }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)' }}>Fui à reunião! 🤝</h1>
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>
           Que tipo de reunião foi?
         </p>
       </div>
@@ -211,27 +214,32 @@ export default function ReuniaoPage() {
               onClick={() => setTipoSelecionado(tipo)}
               className="w-full flex items-center gap-4 p-4 rounded-2xl text-left transition-all"
               style={{
-                background: selecionado
-                  ? 'linear-gradient(135deg, rgba(4,69,222,0.3), rgba(0,195,255,0.15))'
-                  : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${selecionado ? 'rgba(0,195,255,0.5)' : 'rgba(255,255,255,0.06)'}`,
+                background: selecionado ? 'rgba(0,157,255,0.08)' : 'var(--bg-card)',
+                border: `2px solid ${selecionado ? 'var(--accent)' : 'var(--border)'}`,
+                cursor: 'pointer',
               }}>
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-                   style={{ background: selecionado ? 'rgba(0,195,255,0.2)' : 'rgba(255,255,255,0.05)' }}>
-                <Icon size={20} color={selecionado ? '#00c3ff' : 'rgba(241,245,249,0.4)'} />
+              <div style={{
+                width: 44, height: 44, borderRadius: 14,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                background: selecionado ? 'rgba(0,157,255,0.15)' : 'var(--bg-card-2)',
+                color: selecionado ? 'var(--accent)' : 'var(--text-3)',
+              }}>
+                <Icon size={20} weight="bold" />
               </div>
-              <div className="flex-1">
-                <div className="font-semibold text-sm text-white">{tipo.nome}</div>
+              <div style={{ flex: 1, fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-1)' }}>
+                {tipo.nome}
               </div>
-              <div className="text-xs font-bold" style={{ color: '#00c3ff' }}>+{tipo.pontos}</div>
-              {selecionado && <CheckCircle size={18} color="#00c3ff" />}
+              <div>
+                <span className="badge badge-blue">+{tipo.pontos}</span>
+              </div>
+              {selecionado && <CheckCircle size={18} weight="bold" color="#009dff" />}
             </button>
           )
         })}
       </div>
 
       {tipoSelecionado && (
-        <button onClick={() => setEtapa('notas')} className="btn-rad">
+        <button onClick={() => setEtapa('notas')} className="btn-primary">
           Continuar →
         </button>
       )}
@@ -245,19 +253,20 @@ function NotaSlider({ valor, onChange, labelBaixo, labelAlto }: {
 }) {
   return (
     <div>
-      <div className="flex justify-between text-xs mb-2" style={{ color: 'rgba(241,245,249,0.4)' }}>
+      <div className="flex justify-between text-xs mb-2" style={{ color: 'var(--text-3)' }}>
         <span>{labelBaixo}</span>
-        <span className="font-bold text-white text-sm">{valor}/10</span>
+        <span style={{ fontWeight: 800, color: 'var(--text-1)', fontSize: '0.875rem' }}>{valor}/10</span>
         <span>{labelAlto}</span>
       </div>
       <input type="range" min={0} max={10} value={valor}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full" style={{ accentColor: '#00c3ff', height: '6px' }} />
+        className="w-full" style={{ accentColor: 'var(--accent)', height: '6px' }} />
       <div className="flex justify-between mt-1">
         {[0,1,2,3,4,5,6,7,8,9,10].map(n => (
-          <span key={n} className="text-xs" style={{
-            color: n === valor ? '#00c3ff' : 'rgba(241,245,249,0.2)',
-            fontWeight: n === valor ? 700 : 400,
+          <span key={n} style={{
+            fontSize: '0.65rem',
+            color: n === valor ? 'var(--accent)' : 'var(--text-3)',
+            fontWeight: n === valor ? 800 : 600,
           }}>{n}</span>
         ))}
       </div>
