@@ -1,8 +1,9 @@
 'use client'
 import Link from 'next/link'
 import {
-  Fire, Trophy, CheckCircle,
-  CalendarCheck, BookOpenText, ClipboardText, ChatCircleText, SignOut, CaretRight,
+  Fire, Trophy, CheckCircle, HandWaving, Heart, Medal,
+  CalendarCheck, BookOpenText, ClipboardText, ChatCircleText,
+  SignOut, CaretRight, Leaf, LightningA,
 } from '@phosphor-icons/react'
 import { createClient } from '@/lib/supabase/client'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
@@ -37,7 +38,6 @@ export default function DashboardClient({
   const meses = Math.floor((diasLimpo % 365) / 30)
   const dias  = diasLimpo % 30
 
-  // Week tracker: Mon=0 … Sun=6
   const jsDay = agora.getDay()
   const todayMon = jsDay === 0 ? 6 : jsDay - 1
 
@@ -64,7 +64,7 @@ export default function DashboardClient({
   const doneCount = [reunioesHoje > 0, leuHoje, inventarioHoje].filter(Boolean).length
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
 
       {/* ── Header ─────────────────────────────────────── */}
       <div className="flex items-center justify-between">
@@ -72,8 +72,9 @@ export default function DashboardClient({
           <p style={{ color: 'var(--text-3)', fontSize: '0.75rem', fontWeight: 700 }}>
             {diaSemana}, {dia} de {mes}
           </p>
-          <h1 style={{ color: 'var(--text-1)', fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
-            {saudacao()}, {nome.split(' ')[0]}! 👋
+          <h1 style={{ color: 'var(--text-1)', fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: 6 }}>
+            {saudacao()}, {nome.split(' ')[0]}!
+            <HandWaving size={20} weight="duotone" color="var(--duo-yellow)" />
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -84,27 +85,55 @@ export default function DashboardClient({
         </div>
       </div>
 
-      {/* ── Hero — Tempo Limpo ─────────────────────────── */}
-      <div style={{ background: 'var(--accent-grad)', borderRadius: 20, padding: '1.5rem' }}>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.875rem' }}>
-          TEMPO LIMPO
-        </p>
-        <div style={{ display: 'flex', gap: '0.625rem' }}>
-          {anos > 0 && <MiniCard valor={anos} label="anos" grande={false} />}
-          {(anos > 0 || meses > 0) && <MiniCard valor={meses} label="meses" grande={false} />}
-          <MiniCard valor={dias} label="dias" grande={anos === 0 && meses === 0} />
+      {/* ── Tempo Limpo ────────────────────────────────── */}
+      <div className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: 18, flexShrink: 0,
+          background: 'var(--duo-blue-bg)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          border: '2.5px solid var(--duo-blue)',
+        }}>
+          <Leaf size={28} weight="duotone" color="var(--duo-blue)" />
         </div>
-        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.8rem', fontWeight: 700, marginTop: '0.875rem' }}>
-          Só por hoje 💙
-        </p>
+        <div style={{ flex: 1 }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.4rem' }}>
+            TEMPO LIMPO
+          </p>
+          <div style={{ display: 'flex', gap: '0.875rem', alignItems: 'baseline' }}>
+            {anos > 0 && (
+              <span>
+                <span style={{ fontSize: '1.875rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{anos}</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>ano{anos !== 1 ? 's' : ''}</span>
+              </span>
+            )}
+            {(anos > 0 || meses > 0) && (
+              <span>
+                <span style={{ fontSize: '1.875rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{meses}</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>mes{meses !== 1 ? 'es' : ''}</span>
+              </span>
+            )}
+            <span>
+              <span style={{ fontSize: anos === 0 && meses === 0 ? '2.5rem' : '1.875rem', fontWeight: 900, color: 'var(--duo-blue)', lineHeight: 1 }}>{dias}</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>dia{dias !== 1 ? 's' : ''}</span>
+            </span>
+          </div>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.75rem', fontWeight: 700, marginTop: '0.375rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+            Só por hoje
+            <Heart size={13} weight="fill" color="var(--duo-blue)" />
+          </p>
+        </div>
       </div>
 
-      {/* ── Section: Esta semana ───────────────────────── */}
-      <SectionPill
-        color="#FF9600"
-        shadow="#CC7800"
-        label="ESTA SEMANA"
-        right={streak > 0 ? `🔥 ${streak} dias` : undefined}
+      {/* ── Esta semana ────────────────────────────────── */}
+      <SectionHeader
+        label="Esta semana"
+        right={streak > 0
+          ? <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--duo-orange)', fontWeight: 800, fontSize: '0.85rem' }}>
+              <Fire size={16} weight="fill" />
+              {streak} dias
+            </div>
+          : undefined
+        }
       />
 
       <div className="card" style={{ padding: '1rem' }}>
@@ -127,42 +156,50 @@ export default function DashboardClient({
         </div>
       </div>
 
-      {/* ── Section: XP de hoje ───────────────────────── */}
-      <SectionPill
-        color="var(--duo-blue)"
-        shadow="var(--duo-blue-dark)"
-        label="XP DE HOJE"
-        right={`${nivel.emoji} ${nivel.nivel}`}
+      {/* ── XP de hoje ─────────────────────────────────── */}
+      <SectionHeader
+        label="XP de hoje"
+        right={
+          <span style={{ fontWeight: 800, fontSize: '0.8rem', color: 'var(--text-2)' }}>
+            {nivel.nivel}
+          </span>
+        }
       />
 
-      <div className="card" style={{ paddingBottom: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <span style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--duo-yellow-dark)', lineHeight: 1 }}>
-            {pontuacaoHoje}
-          </span>
-          <span style={{ color: 'var(--duo-gray)', fontSize: '0.875rem', fontWeight: 700 }}>/100 XP</span>
-          <div style={{ flex: 1 }} />
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>{nivel.mensagem}</span>
+      <div className="card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.875rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, borderRadius: 14, background: 'rgba(255,200,0,0.15)' }}>
+            <LightningA size={24} weight="fill" color="var(--duo-yellow)" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+              <span style={{ fontSize: '1.875rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{pontuacaoHoje}</span>
+              <span style={{ color: 'var(--text-3)', fontSize: '0.875rem', fontWeight: 700 }}>/100 XP</span>
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-3)', fontWeight: 600 }}>{nivel.mensagem}</div>
+          </div>
         </div>
-        {/* Duolingo XP bar */}
-        <div className="duo-bar-wrap" style={{ marginRight: 60 }}>
+        <div className="duo-bar-wrap">
           <div className="duo-bar-track" />
           <div className="duo-bar-fill" style={{ width: `${Math.max(5, Math.min(100, porcentagem))}%` }}>
             <div className="duo-bar-shine" />
           </div>
         </div>
-        <div className="duo-bar-badge" style={{ position: 'relative', display: 'inline-block', marginTop: '0.5rem', float: 'right' }}>
-          {pontuacaoHoje}/100
-        </div>
-        <div style={{ clear: 'both' }} />
       </div>
 
-      {/* ── Section: Atividades de hoje ───────────────── */}
-      <SectionPill
-        color="var(--duo-green)"
-        shadow="var(--duo-green-dark)"
-        label="ATIVIDADES DE HOJE"
-        right={`${doneCount}/3`}
+      {/* ── Atividades de hoje ─────────────────────────── */}
+      <SectionHeader
+        label="Atividades de hoje"
+        right={
+          <span style={{
+            background: doneCount === 3 ? 'var(--duo-green-bg)' : 'var(--bg-card-2)',
+            border: `1.5px solid ${doneCount === 3 ? 'var(--duo-green)' : 'var(--border)'}`,
+            color: doneCount === 3 ? 'var(--duo-green)' : 'var(--text-3)',
+            borderRadius: 99, padding: '2px 10px', fontSize: '0.75rem', fontWeight: 800,
+          }}>
+            {doneCount}/3
+          </span>
+        }
       />
 
       <div className="space-y-3">
@@ -174,11 +211,11 @@ export default function DashboardClient({
             <CalendarCheck size={26} weight="duotone" />
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: reunioesHoje > 0 ? 'var(--duo-blue)' : 'var(--text-1)', letterSpacing: '-0.01em' }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: reunioesHoje > 0 ? 'var(--duo-blue)' : 'var(--text-1)' }}>
               Fui à reunião
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
-              {reunioesHoje > 0 ? `${reunioesHoje} reunião(ões) hoje ✓` : 'Registre sua presença'}
+              {reunioesHoje > 0 ? `${reunioesHoje} reunião(ões) hoje` : 'Registre sua presença'}
             </div>
           </div>
           {reunioesHoje > 0
@@ -195,11 +232,11 @@ export default function DashboardClient({
             <BookOpenText size={26} weight="duotone" />
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: leuHoje ? 'var(--duo-blue)' : 'var(--text-1)', letterSpacing: '-0.01em' }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: leuHoje ? 'var(--duo-blue)' : 'var(--text-1)' }}>
               Só por hoje
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
-              {leuHoje ? 'Leitura concluída hoje ✓' : 'Leia o texto do dia'}
+              {leuHoje ? 'Leitura concluída hoje' : 'Leia o texto do dia'}
             </div>
           </div>
           {leuHoje
@@ -216,11 +253,11 @@ export default function DashboardClient({
             <ClipboardText size={26} weight="duotone" />
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: inventarioHoje ? 'var(--duo-blue)' : 'var(--text-1)', letterSpacing: '-0.01em' }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: inventarioHoje ? 'var(--duo-blue)' : 'var(--text-1)' }}>
               10° Passo
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
-              {inventarioHoje ? 'Inventário feito hoje ✓' : 'Inventário pessoal diário'}
+              {inventarioHoje ? 'Inventário feito hoje' : 'Inventário pessoal diário'}
             </div>
           </div>
           {inventarioHoje
@@ -230,25 +267,23 @@ export default function DashboardClient({
         </Link>
       </div>
 
-      {/* ── Streak + Recorde ──────────────────────────── */}
+      {/* ── Streak + Recorde ───────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-
-        {/* Streak */}
-        <div style={{
-          background: streak > 0 ? 'var(--streak-card-bg)' : 'var(--bg-card)',
-          border: `2.5px solid ${streak > 0 ? 'rgba(255,150,0,0.4)' : 'var(--border)'}`,
-          borderRadius: 16, padding: '1rem', textAlign: 'center',
+        <div className="card" style={{
+          background: streak > 0 ? 'var(--streak-card-bg)' : undefined,
+          border: `2px solid ${streak > 0 ? 'rgba(255,150,0,0.35)' : 'var(--border)'}`,
+          textAlign: 'center', padding: '1rem',
         }}>
           <div style={{
-            width: 48, height: 48, borderRadius: '50%',
+            width: 44, height: 44, borderRadius: '50%',
             background: streak > 0 ? 'rgba(255,150,0,0.15)' : 'var(--bg-card-2)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 0.5rem',
             color: streak > 0 ? 'var(--duo-orange)' : 'var(--duo-gray)',
           }}>
-            <Fire size={26} weight="duotone" />
+            <Fire size={24} weight="duotone" />
           </div>
-          <div style={{ fontSize: '2.25rem', fontWeight: 900, color: streak > 0 ? 'var(--duo-orange)' : 'var(--duo-gray)', lineHeight: 1 }}>
+          <div style={{ fontSize: '2rem', fontWeight: 900, color: streak > 0 ? 'var(--duo-orange)' : 'var(--duo-gray)', lineHeight: 1 }}>
             {streak}
           </div>
           <div style={{ fontSize: '0.7rem', color: 'var(--duo-gray)', marginTop: '0.25rem', fontWeight: 700 }}>
@@ -256,46 +291,41 @@ export default function DashboardClient({
           </div>
         </div>
 
-        {/* Recorde */}
-        <div style={{
+        <div className="card" style={{
           background: 'var(--trophy-card-bg)',
-          border: '2.5px solid rgba(234,179,8,0.35)',
-          borderRadius: 16, padding: '1rem', textAlign: 'center',
+          border: '2px solid rgba(234,179,8,0.3)',
+          textAlign: 'center', padding: '1rem',
         }}>
           <div style={{
-            width: 48, height: 48, borderRadius: '50%',
+            width: 44, height: 44, borderRadius: '50%',
             background: 'rgba(217,119,6,0.12)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 0.5rem',
-            color: '#d97706',
+            margin: '0 auto 0.5rem', color: '#d97706',
           }}>
-            <Trophy size={26} weight="duotone" />
+            <Trophy size={24} weight="duotone" />
           </div>
-          <div style={{ fontSize: '2.25rem', fontWeight: 900, color: '#d97706', lineHeight: 1 }}>{streakMax}</div>
+          <div style={{ fontSize: '2rem', fontWeight: 900, color: '#d97706', lineHeight: 1 }}>{streakMax}</div>
           <div style={{ fontSize: '0.7rem', color: 'var(--duo-gray)', marginTop: '0.25rem', fontWeight: 700 }}>
             recorde pessoal
           </div>
           {streak === streakMax && streak > 0 && (
-            <div style={{ marginTop: '0.375rem' }}>
-              <span className="badge badge-yellow">🏅 Recorde atual!</span>
+            <div style={{ marginTop: '0.375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, color: '#d97706', fontWeight: 800, fontSize: '0.7rem' }}>
+              <Medal size={14} weight="fill" />
+              Recorde atual!
             </div>
           )}
         </div>
       </div>
 
-      {/* ── Section: Mais ─────────────────────────────── */}
-      <SectionPill
-        color="var(--duo-purple)"
-        shadow="var(--duo-purple-dark)"
-        label="GUIA DOS PASSOS"
-      />
+      {/* ── Guia dos Passos ────────────────────────────── */}
+      <SectionHeader label="Guia dos Passos" />
 
       <Link href="/passos" className="task-card task-card--special">
         <div className="task-icon-circle" style={{ background: 'rgba(216,79,158,0.15)', color: 'var(--duo-pink)' }}>
           <ChatCircleText size={26} weight="duotone" />
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--duo-pink)', letterSpacing: '-0.01em' }}>
+          <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--duo-pink)' }}>
             Guia dos 12 Passos
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
@@ -312,36 +342,13 @@ export default function DashboardClient({
 
 /* ── Sub-components ─────────────────────────────────────── */
 
-function MiniCard({ valor, label, grande }: { valor: number; label: string; grande: boolean }) {
+function SectionHeader({ label, right }: { label: string; right?: React.ReactNode }) {
   return (
-    <div style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 14, padding: '0.625rem 0.75rem', flex: 1, textAlign: 'center' }}>
-      <div style={{ color: 'white', fontSize: grande ? '2.25rem' : '1.75rem', fontWeight: 900, lineHeight: 1 }}>{valor}</div>
-      <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem', fontWeight: 700, marginTop: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
-    </div>
-  )
-}
-
-function SectionPill({ color, shadow, label, right }: {
-  color: string; shadow: string; label: string; right?: string
-}) {
-  return (
-    <div style={{
-      background: color,
-      borderRadius: 14,
-      padding: '10px 18px',
-      borderBottom: `4px solid ${shadow}`,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    }}>
-      <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 2 }}>
+      <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--text-1)', letterSpacing: '-0.01em' }}>
         {label}
       </span>
-      {right && (
-        <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem', fontWeight: 800 }}>
-          {right}
-        </span>
-      )}
+      {right}
     </div>
   )
 }

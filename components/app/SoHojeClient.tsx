@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { BookOpenText, CheckCircle } from '@phosphor-icons/react'
+import { BookOpenText, CheckCircle, Confetti, Quotes } from '@phosphor-icons/react'
 import type { SoPorHoje } from '@/lib/types'
 import { MESES } from '@/lib/types'
 
@@ -75,7 +75,7 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
       {celebrar && (
         <div className="pop-in text-center py-3 rounded-2xl"
              style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}>
-          <span className="text-2xl">🎉</span>
+          <Confetti size={20} weight="duotone" color="var(--success)" />
           <span className="text-sm ml-2 font-bold" style={{ color: 'var(--success)' }}>
             +20 pontos! Leitura registrada!
           </span>
@@ -95,8 +95,9 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
             </div>
             {texto.reflexao && (
               <div className="mt-5 pt-4" style={{ borderTop: '1.5px solid var(--border)' }}>
-                <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent)', marginBottom: '0.5rem', letterSpacing: '0.06em' }}>
-                  💭 REFLEXÃO
+                <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent)', marginBottom: '0.5rem', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Quotes size={14} weight="fill" />
+                  REFLEXÃO
                 </p>
                 <p style={{ fontSize: '0.875rem', fontStyle: 'italic', color: 'var(--text-2)' }}>
                   {texto.reflexao}
@@ -115,13 +116,15 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
             </div>
           ) : (
             <button onClick={handleMarcarLido} disabled={loading} className="btn-primary">
-              {loading ? 'Registrando...' : '✓ Marcar como lido (+20 pts)'}
+              {loading ? 'Registrando...' : 'Marcar como lido (+20 pts)'}
             </button>
           )}
         </>
       ) : (
         <div className="card text-center py-12">
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📖</div>
+          <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+            <BookOpenText size={48} weight="duotone" color="var(--text-3)" />
+          </div>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-1)', marginBottom: '0.5rem' }}>
             Texto não cadastrado
           </h3>

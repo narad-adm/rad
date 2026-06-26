@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import {
-  CheckCircle, UsersFour, Rows, BookOpenText, CalendarDots, Books, Star, Circle,
+  CheckCircle, UsersFour, Rows, BookOpenText, CalendarDots, Books, Star, Circle, Confetti, Fire, Handshake,
 } from '@phosphor-icons/react'
 import type { TipoReuniao } from '@/lib/types'
 
@@ -107,7 +107,9 @@ export default function ReuniaoPage() {
   if (etapa === 'sucesso') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-6">
-        <div className="text-6xl animate-bounce">🎉</div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+          <Confetti size={64} weight="duotone" color="var(--duo-green)" />
+        </div>
         <div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)', marginBottom: '0.5rem' }}>
             Check-in registrado!
@@ -126,7 +128,7 @@ export default function ReuniaoPage() {
           </div>
           {pontosGanhos > tipoSelecionado!.pontos && (
             <div className="badge badge-yellow" style={{ marginTop: '0.75rem' }}>
-              🔥 +20 bônus por ter ido mesmo sem querer!
+              +20 bônus por ter ido mesmo sem querer!
             </div>
           )}
         </div>
@@ -161,7 +163,7 @@ export default function ReuniaoPage() {
               labelBaixo="Não queria" labelAlto="Queria muito" />
             {notaQuerer < 5 && (
               <div className="mt-2 badge badge-yellow" style={{ display: 'inline-flex', padding: '0.5rem 0.75rem' }}>
-                🔥 Bônus de +20 pts por ter ido mesmo sem querer!
+                Bônus de +20 pts por ter ido mesmo sem querer!
               </div>
             )}
           </div>
@@ -199,7 +201,10 @@ export default function ReuniaoPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)' }}>Fui à reunião! 🤝</h1>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)', display: 'flex', alignItems: 'center', gap: 8 }}>
+          Fui à reunião!
+          <Handshake size={26} weight="duotone" color="var(--duo-blue)" />
+        </h1>
         <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>
           Que tipo de reunião foi?
         </p>

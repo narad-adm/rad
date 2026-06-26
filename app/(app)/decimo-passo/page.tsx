@@ -2,15 +2,31 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { ClipboardText, CheckCircle } from '@phosphor-icons/react'
+import { ClipboardText, CheckCircle, Confetti, Star, MagnifyingGlass, HandsPraying, Heart, Warning, Sparkle, Note } from '@phosphor-icons/react'
 
 const PERGUNTAS = [
-  { key: 'honestidade',   titulo: '🔍 Honestidade',      pergunta: 'Onde fui honesto hoje? E onde fui desonesto?' },
-  { key: 'admissoes',     titulo: '🙏 Admissões',         pergunta: 'O que preciso admitir, reparar ou melhorar?' },
-  { key: 'contribuicoes', titulo: '💙 Contribuições',     pergunta: 'Contribuí positivamente para mim e para os outros? E negativamente?' },
-  { key: 'doenca',        titulo: '⚠️ Minha doença',      pergunta: 'Tive vontade de usar? Minha doença se manifestou de alguma forma hoje? Como?' },
-  { key: 'acoes_limpeza', titulo: '✨ Minha recuperação', pergunta: 'O que fiz hoje para me manter limpo(a)?' },
+  { key: 'honestidade',   titulo: 'Honestidade',      pergunta: 'Onde fui honesto hoje? E onde fui desonesto?' },
+  { key: 'admissoes',     titulo: 'Admissões',         pergunta: 'O que preciso admitir, reparar ou melhorar?' },
+  { key: 'contribuicoes', titulo: 'Contribuições',     pergunta: 'Contribuí positivamente para mim e para os outros? E negativamente?' },
+  { key: 'doenca',        titulo: 'Minha doença',      pergunta: 'Tive vontade de usar? Minha doença se manifestou de alguma forma hoje? Como?' },
+  { key: 'acoes_limpeza', titulo: 'Minha recuperação', pergunta: 'O que fiz hoje para me manter limpo(a)?' },
 ]
+
+const PERGUNTA_ICONS: Record<string, React.ComponentType<any>> = {
+  honestidade:   MagnifyingGlass,
+  admissoes:     HandsPraying,
+  contribuicoes: Heart,
+  doenca:        Warning,
+  acoes_limpeza: Sparkle,
+}
+
+const PERGUNTA_COLORS: Record<string, string> = {
+  honestidade:   'var(--duo-blue)',
+  admissoes:     'var(--duo-purple)',
+  contribuicoes: 'var(--duo-pink)',
+  doenca:        'var(--duo-orange)',
+  acoes_limpeza: 'var(--duo-green)',
+}
 
 export default function DecimoPasso() {
   const router = useRouter()
@@ -85,7 +101,7 @@ export default function DecimoPasso() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">📝</div>
+          <Note size={40} weight="duotone" color="var(--text-3)" style={{ marginBottom: 12 }} />
           <p style={{ color: 'var(--text-3)' }}>Carregando...</p>
         </div>
       </div>
@@ -113,7 +129,7 @@ export default function DecimoPasso() {
       {celebrar && (
         <div className="pop-in text-center py-3 rounded-2xl"
              style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}>
-          <span className="text-2xl">🌟</span>
+          <Star size={20} weight="duotone" color="var(--success)" />
           <span className="text-sm ml-2 font-bold" style={{ color: 'var(--success)' }}>
             +25 pontos! Inventário feito!
           </span>
@@ -124,7 +140,10 @@ export default function DecimoPasso() {
         {PERGUNTAS.map(({ key, titulo, pergunta }) => (
           <div key={key} className="card space-y-3">
             <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {(() => { const Icon = PERGUNTA_ICONS[key]; const color = PERGUNTA_COLORS[key]; return <Icon size={16} weight="duotone" color={color} /> })()}
               <p style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-1)' }}>{titulo}</p>
+            </div>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>{pergunta}</p>
             </div>
             <textarea
@@ -150,7 +169,7 @@ export default function DecimoPasso() {
         </div>
       ) : (
         <button onClick={handleSalvar} disabled={salvando || !temAlgumaResposta} className="btn-primary">
-          {salvando ? 'Salvando...' : '✓ Salvar inventário (+25 pts)'}
+          {salvando ? 'Salvando...' : 'Salvar inventário (+25 pts)'}
         </button>
       )}
     </div>

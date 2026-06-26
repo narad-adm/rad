@@ -59,7 +59,7 @@ export default function RelatoriosClient({
           <MiniCard valor={dias} label="dias" grande={anos === 0 && meses === 0} />
         </div>
         <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.875rem', fontWeight: 700, marginTop: '1rem' }}>
-          Só por hoje 💙
+          Só por hoje
         </p>
       </div>
 

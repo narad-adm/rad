@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { ChatCircleText, CaretDown, CaretUp, PaperPlaneTilt, CheckCircle } from '@phosphor-icons/react'
+import { ChatCircleText, CaretDown, CaretUp, PaperPlaneTilt, CheckCircle, Sparkle } from '@phosphor-icons/react'
 import type { PassoPergunta, RespostaPasso } from '@/lib/types'
 
 interface Props {
@@ -101,8 +101,9 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
       {celebrar && (
         <div className="pop-in text-center py-3 rounded-2xl"
              style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}>
+          <Sparkle size={18} weight="duotone" color="var(--success)" />
           <span style={{ fontWeight: 800, fontSize: '0.875rem', color: 'var(--success)' }}>
-            ✨ +15 pontos! Continue respondendo!
+            +15 pontos! Continue respondendo!
           </span>
         </div>
       )}
