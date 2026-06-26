@@ -4,8 +4,6 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'RAD — Recuperação Ativa Diária',
   description: 'Gamificação da recuperação para membros de Narcóticos Anônimos',
-  manifest: '/manifest.json',
-  themeColor: '#0a0e1a',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
