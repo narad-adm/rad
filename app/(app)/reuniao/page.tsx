@@ -256,23 +256,95 @@ function NotaSlider({ valor, onChange, labelBaixo, labelAlto }: {
   valor: number; onChange: (v: number) => void
   labelBaixo: string; labelAlto: string
 }) {
+  const pct = (valor / 10) * 100
+
+  // Color shifts from orange (0) → green (10) based on value
+  const isLow = valor <= 3
+  const isMid = valor > 3 && valor <= 6
+  const accent      = isLow ? '#FF9600' : isMid ? '#1CB0F6' : '#58CC02'
+  const accentDark  = isLow ? '#CC7800' : isMid ? '#0d86c0' : '#58A700'
+  const accentShine = isLow ? '#FFB84D' : isMid ? '#4EC9F9' : '#79D634'
+
   return (
     <div>
-      <div className="flex justify-between text-xs mb-2" style={{ color: 'var(--text-3)' }}>
-        <span>{labelBaixo}</span>
-        <span style={{ fontWeight: 800, color: 'var(--text-1)', fontSize: '0.875rem' }}>{valor}/10</span>
-        <span>{labelAlto}</span>
+      {/* Labels + value badge */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-3)' }}>{labelBaixo}</span>
+        <span style={{
+          background: accent, color: 'white',
+          fontWeight: 900, fontSize: '1rem',
+          padding: '2px 14px', borderRadius: 99,
+          minWidth: 44, textAlign: 'center',
+          boxShadow: `0 3px 0 ${accentDark}`,
+          transition: 'background 0.3s, box-shadow 0.3s',
+        }}>
+          {valor}
+        </span>
+        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-3)' }}>{labelAlto}</span>
       </div>
-      <input type="range" min={0} max={10} value={valor}
-        onChange={e => onChange(Number(e.target.value))}
-        className="w-full" style={{ accentColor: 'var(--accent)', height: '6px' }} />
-      <div className="flex justify-between mt-1">
+
+      {/* Custom Duolingo-style track */}
+      <div style={{ position: 'relative', height: 20, marginBottom: '0.625rem' }}>
+        {/* gray track */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'var(--duo-gray-light)',
+          borderRadius: 64,
+        }} />
+        {/* colored fill — taller than track, like duo-bar */}
+        {pct > 0 && (
+          <div style={{
+            position: 'absolute',
+            top: -5, left: 0,
+            width: `${pct}%`,
+            height: 'calc(100% + 10px)',
+            background: accent,
+            borderRadius: 64,
+            transition: 'width 0.2s ease, background 0.3s',
+            overflow: 'hidden',
+            minWidth: 20,
+          }}>
+            {/* inner shine */}
+            <div style={{
+              position: 'absolute',
+              top: 7, left: 10, right: 10,
+              height: 5,
+              background: accentShine,
+              borderRadius: 4,
+            }} />
+          </div>
+        )}
+        {/* native range input (invisible, sits on top for interaction) */}
+        <input
+          type="range" min={0} max={10} value={valor}
+          onChange={e => onChange(Number(e.target.value))}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            opacity: 0, cursor: 'pointer',
+            margin: 0, padding: 0,
+          }}
+        />
+      </div>
+
+      {/* Step dots */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 1, paddingRight: 1 }}>
         {[0,1,2,3,4,5,6,7,8,9,10].map(n => (
-          <span key={n} style={{
-            fontSize: '0.65rem',
-            color: n === valor ? 'var(--accent)' : 'var(--text-3)',
-            fontWeight: n === valor ? 800 : 600,
-          }}>{n}</span>
+          <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <div style={{
+              width: n === valor ? 8 : 5,
+              height: n === valor ? 8 : 5,
+              borderRadius: '50%',
+              background: n <= valor ? accent : 'var(--duo-gray-light)',
+              transition: 'all 0.2s',
+            }} />
+            <span style={{
+              fontSize: '0.6rem',
+              color: n === valor ? accent : 'var(--text-3)',
+              fontWeight: n === valor ? 900 : 600,
+              transition: 'color 0.2s',
+            }}>{n}</span>
+          </div>
         ))}
       </div>
     </div>
