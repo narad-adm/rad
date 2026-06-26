@@ -188,9 +188,11 @@ export default function ReuniaoPage() {
           />
         </div>
 
-        <button onClick={handleRegistrar} disabled={loading} className="btn-primary">
-          {loading ? 'Registrando...' : `Registrar check-in (+${tipoSelecionado!.pontos + (notaQuerer < 5 ? 20 : 0)} pts)`}
-        </button>
+        <div style={{ paddingBottom: 8 }}>
+          <button onClick={handleRegistrar} disabled={loading} className="btn-primary">
+            {loading ? 'Registrando...' : `Registrar check-in (+${tipoSelecionado!.pontos + (notaQuerer < 5 ? 20 : 0)} pts)`}
+          </button>
+        </div>
       </div>
     )
   }
@@ -241,9 +243,11 @@ export default function ReuniaoPage() {
       </div>
 
       {tipoSelecionado && (
-        <button onClick={() => setEtapa('notas')} className="btn-primary">
-          Continuar →
-        </button>
+        <div style={{ paddingBottom: 8 }}>
+          <button onClick={() => setEtapa('notas')} className="btn-primary">
+            Continuar →
+          </button>
+        </div>
       )}
     </div>
   )
