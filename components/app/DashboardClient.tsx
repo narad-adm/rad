@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import {
   Fire, Trophy, CheckCircle,
-  CalendarCheck, BookOpenText, ClipboardText, ChatCircleText, SignOut,
+  CalendarCheck, BookOpenText, ClipboardText, ChatCircleText, SignOut, CaretRight,
 } from '@phosphor-icons/react'
 import { createClient } from '@/lib/supabase/client'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
@@ -22,6 +22,8 @@ interface Props {
   inventarioHoje: boolean
 }
 
+const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+
 export default function DashboardClient({
   nome, diasLimpo, pontuacaoHoje, porcentagem,
   nivel, streak, streakMax, reunioesHoje, leuHoje, inventarioHoje,
@@ -34,6 +36,17 @@ export default function DashboardClient({
   const anos  = Math.floor(diasLimpo / 365)
   const meses = Math.floor((diasLimpo % 365) / 30)
   const dias  = diasLimpo % 30
+
+  // Week tracker: Mon=0 … Sun=6
+  const jsDay = agora.getDay()
+  const todayMon = jsDay === 0 ? 6 : jsDay - 1
+
+  function getDayType(i: number): 'done' | 'today-done' | 'today-empty' | 'past-empty' | 'future' {
+    if (i > todayMon) return 'future'
+    if (i === todayMon) return pontuacaoHoje > 0 ? 'today-done' : 'today-empty'
+    const daysBack = todayMon - i
+    return daysBack < streak ? 'done' : 'past-empty'
+  }
 
   async function handleLogout() {
     const supabase = createClient()
@@ -48,16 +61,18 @@ export default function DashboardClient({
     return 'Boa noite'
   }
 
+  const doneCount = [reunioesHoje > 0, leuHoje, inventarioHoje].filter(Boolean).length
+
   return (
     <div className="space-y-4">
 
-      {/* Header */}
+      {/* ── Header ─────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.75rem', fontWeight: 700 }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.75rem', fontWeight: 700 }}>
             {diaSemana}, {dia} de {mes}
           </p>
-          <h1 style={{ color: 'var(--text-1)', fontSize: '1.25rem', fontWeight: 800 }}>
+          <h1 style={{ color: 'var(--text-1)', fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
             {saudacao()}, {nome.split(' ')[0]}! 👋
           </h1>
         </div>
@@ -69,223 +84,289 @@ export default function DashboardClient({
         </div>
       </div>
 
-      {/* Hero — Tempo Limpo */}
-      <div style={{ background: 'var(--accent-grad)', borderRadius: 24, padding: '1.75rem' }}>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '1rem' }}>
+      {/* ── Hero — Tempo Limpo ─────────────────────────── */}
+      <div style={{ background: 'var(--accent-grad)', borderRadius: 20, padding: '1.5rem' }}>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.875rem' }}>
           TEMPO LIMPO
         </p>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.625rem' }}>
           {anos > 0 && <MiniCard valor={anos} label="anos" grande={false} />}
           {(anos > 0 || meses > 0) && <MiniCard valor={meses} label="meses" grande={false} />}
           <MiniCard valor={dias} label="dias" grande={anos === 0 && meses === 0} />
         </div>
-        <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.875rem', fontWeight: 700, marginTop: '1rem' }}>
+        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.8rem', fontWeight: 700, marginTop: '0.875rem' }}>
           Só por hoje 💙
         </p>
       </div>
 
-      {/* Pontuação do dia */}
-      <div className="card" style={pontuacaoHoje >= 70 ? { borderColor: 'rgba(0,157,255,0.4)' } : {}}>
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <p style={{ color: 'var(--text-3)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.08em' }}>HOJE</p>
-            <div className="flex items-center gap-2">
-              <span style={{ color: 'var(--text-1)', fontSize: '1.75rem', fontWeight: 900 }}>{pontuacaoHoje}</span>
-              <span style={{ color: 'var(--text-3)', fontSize: '0.875rem' }}>/100 pts</span>
-            </div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '0.125rem' }}>{nivel.emoji}</div>
-            <div style={{ color: nivel.cor, fontSize: '0.75rem', fontWeight: 800 }}>{nivel.nivel}</div>
-          </div>
+      {/* ── Section: Esta semana ───────────────────────── */}
+      <SectionPill
+        color="#FF9600"
+        shadow="#CC7800"
+        label="ESTA SEMANA"
+        right={streak > 0 ? `🔥 ${streak} dias` : undefined}
+      />
+
+      <div className="card" style={{ padding: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          {DIAS_SEMANA_SHORT.map((label, i) => {
+            const type = getDayType(i)
+            const isActive = type === 'done' || type === 'today-done'
+            const isToday = type === 'today-done' || type === 'today-empty'
+            return (
+              <div key={i} className="day-col">
+                <span className="day-label" style={{
+                  color: isToday ? 'var(--duo-blue)' : isActive ? 'var(--duo-orange)' : 'var(--duo-gray)',
+                }}>
+                  {label}
+                </span>
+                <DayCircle type={type} />
+              </div>
+            )
+          })}
         </div>
-        <div className="progress-bar mb-3">
-          <div className="progress-fill" style={{ width: `${porcentagem}%` }} />
-        </div>
-        <p style={{ color: 'var(--text-3)', fontSize: '0.75rem' }}>{nivel.mensagem}</p>
       </div>
 
-      {/* Streak e Recorde */}
+      {/* ── Section: XP de hoje ───────────────────────── */}
+      <SectionPill
+        color="var(--duo-blue)"
+        shadow="var(--duo-blue-dark)"
+        label="XP DE HOJE"
+        right={`${nivel.emoji} ${nivel.nivel}`}
+      />
+
+      <div className="card" style={{ paddingBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+          <span style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--duo-yellow-dark)', lineHeight: 1 }}>
+            {pontuacaoHoje}
+          </span>
+          <span style={{ color: 'var(--duo-gray)', fontSize: '0.875rem', fontWeight: 700 }}>/100 XP</span>
+          <div style={{ flex: 1 }} />
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>{nivel.mensagem}</span>
+        </div>
+        {/* Duolingo XP bar */}
+        <div className="duo-bar-wrap" style={{ marginRight: 60 }}>
+          <div className="duo-bar-track" />
+          <div className="duo-bar-fill" style={{ width: `${Math.max(5, Math.min(100, porcentagem))}%` }}>
+            <div className="duo-bar-shine" />
+          </div>
+        </div>
+        <div className="duo-bar-badge" style={{ position: 'relative', display: 'inline-block', marginTop: '0.5rem', float: 'right' }}>
+          {pontuacaoHoje}/100
+        </div>
+        <div style={{ clear: 'both' }} />
+      </div>
+
+      {/* ── Section: Atividades de hoje ───────────────── */}
+      <SectionPill
+        color="var(--duo-green)"
+        shadow="var(--duo-green-dark)"
+        label="ATIVIDADES DE HOJE"
+        right={`${doneCount}/3`}
+      />
+
+      <div className="space-y-3">
+        <Link href="/reuniao" className={`task-card ${reunioesHoje > 0 ? 'task-card--done' : ''}`}>
+          <div className="task-icon-circle" style={{
+            background: reunioesHoje > 0 ? 'rgba(28,176,246,0.15)' : 'rgba(255,150,0,0.12)',
+            color: reunioesHoje > 0 ? 'var(--duo-blue)' : 'var(--duo-orange)',
+          }}>
+            <CalendarCheck size={26} weight="duotone" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: reunioesHoje > 0 ? 'var(--duo-blue)' : 'var(--text-1)', letterSpacing: '-0.01em' }}>
+              Fui à reunião
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
+              {reunioesHoje > 0 ? `${reunioesHoje} reunião(ões) hoje ✓` : 'Registre sua presença'}
+            </div>
+          </div>
+          {reunioesHoje > 0
+            ? <CheckCircle size={22} weight="bold" color="var(--duo-blue)" />
+            : <><span className="badge badge-orange">+30 XP</span><CaretRight size={16} weight="bold" color="var(--duo-gray)" /></>
+          }
+        </Link>
+
+        <Link href="/sohoje" className={`task-card ${leuHoje ? 'task-card--done' : ''}`}>
+          <div className="task-icon-circle" style={{
+            background: leuHoje ? 'rgba(28,176,246,0.15)' : 'rgba(206,130,255,0.12)',
+            color: leuHoje ? 'var(--duo-blue)' : 'var(--duo-purple)',
+          }}>
+            <BookOpenText size={26} weight="duotone" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: leuHoje ? 'var(--duo-blue)' : 'var(--text-1)', letterSpacing: '-0.01em' }}>
+              Só por hoje
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
+              {leuHoje ? 'Leitura concluída hoje ✓' : 'Leia o texto do dia'}
+            </div>
+          </div>
+          {leuHoje
+            ? <CheckCircle size={22} weight="bold" color="var(--duo-blue)" />
+            : <><span className="badge badge-purple">+20 XP</span><CaretRight size={16} weight="bold" color="var(--duo-gray)" /></>
+          }
+        </Link>
+
+        <Link href="/decimo-passo" className={`task-card ${inventarioHoje ? 'task-card--done' : ''}`}>
+          <div className="task-icon-circle" style={{
+            background: inventarioHoje ? 'rgba(28,176,246,0.15)' : 'rgba(88,204,2,0.12)',
+            color: inventarioHoje ? 'var(--duo-blue)' : 'var(--duo-green)',
+          }}>
+            <ClipboardText size={26} weight="duotone" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: inventarioHoje ? 'var(--duo-blue)' : 'var(--text-1)', letterSpacing: '-0.01em' }}>
+              10° Passo
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
+              {inventarioHoje ? 'Inventário feito hoje ✓' : 'Inventário pessoal diário'}
+            </div>
+          </div>
+          {inventarioHoje
+            ? <CheckCircle size={22} weight="bold" color="var(--duo-blue)" />
+            : <><span className="badge badge-green">+25 XP</span><CaretRight size={16} weight="bold" color="var(--duo-gray)" /></>
+          }
+        </Link>
+      </div>
+
+      {/* ── Streak + Recorde ──────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
 
         {/* Streak */}
         <div style={{
           background: streak > 0 ? 'var(--streak-card-bg)' : 'var(--bg-card)',
-          border: '2px solid rgba(255,107,53,0.3)',
-          borderRadius: 20, padding: '1.25rem', textAlign: 'center',
+          border: `2.5px solid ${streak > 0 ? 'rgba(255,150,0,0.4)' : 'var(--border)'}`,
+          borderRadius: 16, padding: '1rem', textAlign: 'center',
         }}>
           <div style={{
-            width: 52, height: 52, borderRadius: '50%',
-            background: 'rgba(255,107,53,0.12)',
+            width: 48, height: 48, borderRadius: '50%',
+            background: streak > 0 ? 'rgba(255,150,0,0.15)' : 'var(--bg-card-2)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 0.75rem',
-            color: streak > 0 ? '#ff6b35' : 'var(--text-3)',
+            margin: '0 auto 0.5rem',
+            color: streak > 0 ? 'var(--duo-orange)' : 'var(--duo-gray)',
           }}>
-            <Fire size={28} weight="duotone" />
+            <Fire size={26} weight="duotone" />
           </div>
-          {streak > 0 ? (
-            <>
-              <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#ff6b35', lineHeight: 1 }}>{streak}</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>dias seguidos</div>
-            </>
-          ) : (
-            <>
-              <div style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--text-3)', lineHeight: 1 }}>0</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-3)', marginTop: '0.25rem' }}>Comece hoje!</div>
-            </>
-          )}
+          <div style={{ fontSize: '2.25rem', fontWeight: 900, color: streak > 0 ? 'var(--duo-orange)' : 'var(--duo-gray)', lineHeight: 1 }}>
+            {streak}
+          </div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--duo-gray)', marginTop: '0.25rem', fontWeight: 700 }}>
+            {streak > 0 ? 'dias seguidos' : 'Comece hoje!'}
+          </div>
         </div>
 
         {/* Recorde */}
         <div style={{
           background: 'var(--trophy-card-bg)',
-          border: '2px solid rgba(234,179,8,0.3)',
-          borderRadius: 20, padding: '1.25rem', textAlign: 'center',
+          border: '2.5px solid rgba(234,179,8,0.35)',
+          borderRadius: 16, padding: '1rem', textAlign: 'center',
         }}>
           <div style={{
-            width: 52, height: 52, borderRadius: '50%',
+            width: 48, height: 48, borderRadius: '50%',
             background: 'rgba(217,119,6,0.12)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 0.75rem',
+            margin: '0 auto 0.5rem',
             color: '#d97706',
           }}>
-            <Trophy size={28} weight="duotone" />
+            <Trophy size={26} weight="duotone" />
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#d97706', lineHeight: 1 }}>{streakMax}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>recorde pessoal</div>
+          <div style={{ fontSize: '2.25rem', fontWeight: 900, color: '#d97706', lineHeight: 1 }}>{streakMax}</div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--duo-gray)', marginTop: '0.25rem', fontWeight: 700 }}>
+            recorde pessoal
+          </div>
           {streak === streakMax && streak > 0 && (
-            <div style={{ marginTop: '0.5rem' }}>
-              <span className="badge badge-green">🏅 Recorde atual!</span>
+            <div style={{ marginTop: '0.375rem' }}>
+              <span className="badge badge-yellow">🏅 Recorde atual!</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Hoje você já fez */}
-      <div className="card">
-        <p style={{ color: 'var(--text-3)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
-          HOJE VOCÊ JÁ FEZ
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-          <ActivityMiniCard done={reunioesHoje > 0} label="Reunião">
-            <CalendarCheck size={24} weight="bold" />
-          </ActivityMiniCard>
-          <ActivityMiniCard done={leuHoje} label="Leitura">
-            <BookOpenText size={24} weight="duotone" />
-          </ActivityMiniCard>
-          <ActivityMiniCard done={inventarioHoje} label="Inventário">
-            <ClipboardText size={24} weight="duotone" />
-          </ActivityMiniCard>
-        </div>
-      </div>
+      {/* ── Section: Mais ─────────────────────────────── */}
+      <SectionPill
+        color="var(--duo-purple)"
+        shadow="var(--duo-purple-dark)"
+        label="GUIA DOS PASSOS"
+      />
 
-      {/* Ações rápidas */}
-      <div>
-        <p style={{ color: 'var(--text-3)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
-          O QUE VOCÊ QUER FAZER AGORA?
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <ActivityCard
-            href="/reuniao"
-            iconGrad="linear-gradient(135deg, #009dff, #7d88e6)"
-            titulo="Fui à reunião"
-            pts="+30 pts"
-            done={reunioesHoje > 0}
-          >
-            <CalendarCheck size={28} weight="duotone" color="white" />
-          </ActivityCard>
-          <ActivityCard
-            href="/sohoje"
-            iconGrad="linear-gradient(135deg, #7d88e6, #ab91ec)"
-            titulo="Só por hoje"
-            pts="+20 pts"
-            done={leuHoje}
-          >
-            <BookOpenText size={28} weight="duotone" color="white" />
-          </ActivityCard>
-          <ActivityCard
-            href="/decimo-passo"
-            iconGrad="linear-gradient(135deg, #8a81e5, #b280e6)"
-            titulo="10° Passo"
-            pts="+25 pts"
-            done={inventarioHoje}
-          >
-            <ClipboardText size={28} weight="duotone" color="white" />
-          </ActivityCard>
-          <ActivityCard
-            href="/passos"
-            iconGrad="linear-gradient(135deg, #22c55e, #16a34a)"
-            titulo="Guia dos passos"
-            pts="+15 pts/resp."
-            done={false}
-          >
-            <ChatCircleText size={28} weight="duotone" color="white" />
-          </ActivityCard>
+      <Link href="/passos" className="task-card task-card--special">
+        <div className="task-icon-circle" style={{ background: 'rgba(216,79,158,0.15)', color: 'var(--duo-pink)' }}>
+          <ChatCircleText size={26} weight="duotone" />
         </div>
-      </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--duo-pink)', letterSpacing: '-0.01em' }}>
+            Guia dos 12 Passos
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--duo-gray)', marginTop: '0.125rem' }}>
+            Responda perguntas e ganhe XP
+          </div>
+        </div>
+        <span className="badge badge-pink">+15 XP</span>
+        <CaretRight size={16} weight="bold" color="var(--duo-pink)" />
+      </Link>
 
     </div>
   )
 }
+
+/* ── Sub-components ─────────────────────────────────────── */
 
 function MiniCard({ valor, label, grande }: { valor: number; label: string; grande: boolean }) {
   return (
-    <div style={{ background: 'rgba(255,255,255,0.15)', borderRadius: 16, padding: '0.75rem', flex: 1, textAlign: 'center' }}>
-      <div style={{ color: 'white', fontSize: grande ? '2.5rem' : '2rem', fontWeight: 900, lineHeight: 1 }}>{valor}</div>
-      <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', fontWeight: 700, marginTop: '0.25rem' }}>{label}</div>
+    <div style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 14, padding: '0.625rem 0.75rem', flex: 1, textAlign: 'center' }}>
+      <div style={{ color: 'white', fontSize: grande ? '2.25rem' : '1.75rem', fontWeight: 900, lineHeight: 1 }}>{valor}</div>
+      <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem', fontWeight: 700, marginTop: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
     </div>
   )
 }
 
-function ActivityMiniCard({ done, label, children }: { done: boolean; label: string; children: React.ReactNode }) {
-  return (
-    <div
-      className={!done ? 'animate-pulse' : ''}
-      style={{
-        background: done ? 'rgba(34,197,94,0.1)' : 'var(--bg-card-2)',
-        border: done ? '2px solid rgba(34,197,94,0.3)' : '2px dashed var(--border)',
-        borderRadius: 16,
-        padding: '0.75rem 0.5rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '0.375rem',
-        textAlign: 'center',
-      }}>
-      {done
-        ? <CheckCircle size={24} weight="bold" color="#22c55e" />
-        : <div style={{ color: 'var(--text-3)' }}>{children}</div>
-      }
-      <span style={{ fontSize: '0.7rem', fontWeight: 700, color: done ? 'var(--text-2)' : 'var(--text-3)' }}>
-        {label}
-      </span>
-    </div>
-  )
-}
-
-function ActivityCard({ href, iconGrad, titulo, pts, done, children }: {
-  href: string; iconGrad: string; titulo: string; pts: string; done: boolean; children: React.ReactNode
+function SectionPill({ color, shadow, label, right }: {
+  color: string; shadow: string; label: string; right?: string
 }) {
   return (
-    <Link href={href} className="activity-card">
-      {done && (
-        <div style={{ position: 'absolute', top: 10, right: 10 }}>
-          <CheckCircle size={18} weight="bold" color="#22c55e" />
-        </div>
+    <div style={{
+      background: color,
+      borderRadius: 14,
+      padding: '10px 18px',
+      borderBottom: `4px solid ${shadow}`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    }}>
+      <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+        {label}
+      </span>
+      {right && (
+        <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem', fontWeight: 800 }}>
+          {right}
+        </span>
       )}
-      <div style={{
-        width: 52, height: 52, borderRadius: '50%',
-        background: iconGrad,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        {children}
-      </div>
-      <div>
-        <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-1)' }}>{titulo}</div>
-        <div style={{ marginTop: '0.25rem' }}>
-          <span className="badge badge-blue" style={{ fontSize: '0.7rem' }}>{pts}</span>
-        </div>
-      </div>
-    </Link>
+    </div>
+  )
+}
+
+function DayCircle({ type }: { type: 'done' | 'today-done' | 'today-empty' | 'past-empty' | 'future' }) {
+  const cls = {
+    'done':        'day-circle day-circle--done',
+    'today-done':  'day-circle day-circle--today',
+    'today-empty': 'day-circle day-circle--today',
+    'past-empty':  'day-circle day-circle--empty',
+    'future':      'day-circle day-circle--future',
+  }[type]
+
+  const showCheck = type === 'done' || type === 'today-done'
+
+  return (
+    <div className={cls}>
+      {showCheck && (
+        <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+          <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+      {type === 'today-empty' && (
+        <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(255,255,255,0.6)' }} />
+      )}
+    </div>
   )
 }
