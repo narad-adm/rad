@@ -15,8 +15,8 @@
   --text-2:          #4a5580;
   --text-3:          #AFAFAF;
   --accent:          #1CB0F6;
-  --accent-grad:     linear-gradient(135deg, #1CB0F6 0%, #7d88e6 100%);
-  --accent-grad-v:   linear-gradient(180deg, #1CB0F6 0%, #8a81e5 100%);
+  --accent-grad:     #1CB0F6;
+  --accent-grad-v:   #1CB0F6;
   --shadow-btn:      #0d86c0;
   --shadow-card:     rgba(28, 176, 246, 0.12);
   --success:         #58CC02;
@@ -47,8 +47,8 @@
   --duo-gray-light:   #E5E5E5;
 
   /* Streak / record card backgrounds */
-  --streak-card-bg:  linear-gradient(135deg, #fff4ef, #ffe8d6);
-  --trophy-card-bg:  linear-gradient(135deg, #fffbeb, #fef3c7);
+  --streak-card-bg:  #fff4ef;
+  --trophy-card-bg:  #fffbeb;
 }
 
 html.dark {
@@ -60,7 +60,7 @@ html.dark {
   --text-2:          #8896b3;
   --text-3:          #4a5580;
   --accent:          #1CB0F6;
-  --accent-grad:     linear-gradient(135deg, #1CB0F6 0%, #7d88e6 100%);
+  --accent-grad:     #1CB0F6;
   --shadow-btn:      #0d86c0;
   --shadow-card:     rgba(28, 176, 246, 0.08);
 
@@ -71,8 +71,8 @@ html.dark {
   --duo-pink-bg:     rgba(216, 79, 158, 0.12);
   --duo-gray-light:  #2a3352;
 
-  --streak-card-bg:  linear-gradient(135deg, #2a1a0f, #3a2010);
-  --trophy-card-bg:  linear-gradient(135deg, #1f1a00, #2a2200);
+  --streak-card-bg:  #2a1a0f;
+  --trophy-card-bg:  #1f1a00;
 }
 
 @layer base {

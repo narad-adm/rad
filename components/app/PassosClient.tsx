@@ -71,7 +71,7 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
           <h1 style={{ color: 'var(--text-1)', fontSize: '1.5rem', fontWeight: 900 }}>Os 12 Passos</h1>
         </div>
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-             style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
+             style={{ background: '#22c55e' }}>
           <ChatCircleText size={22} weight="duotone" color="white" />
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 900, fontSize: '0.875rem', flexShrink: 0,
                     background: completo
-                      ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+                      ? '#22c55e'
                       : 'rgba(0,157,255,0.15)',
                     color: completo ? 'white' : 'var(--accent)',
                   }}>
@@ -195,7 +195,7 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
                             className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 self-end transition-all"
                             style={{
                               background: textosResposta[pergunta.id]?.trim()
-                                ? 'var(--accent-grad)'
+                                ? 'var(--duo-blue)'
                                 : 'var(--bg-card-2)',
                               border: '1.5px solid var(--border)',
                               color: textosResposta[pergunta.id]?.trim() ? 'white' : 'var(--text-3)',

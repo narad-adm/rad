@@ -49,7 +49,7 @@ export default function RelatoriosClient({
       </div>
 
       {/* Hero — Tempo Limpo */}
-      <div style={{ background: 'var(--accent-grad)', borderRadius: 24, padding: '1.75rem' }}>
+      <div style={{ background: 'var(--duo-blue)', borderRadius: 24, padding: '1.75rem' }}>
         <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '1rem' }}>
           TEMPO LIMPO
         </p>
@@ -137,7 +137,7 @@ export default function RelatoriosClient({
               const isHoje = data === hoje
               const altura = pontos > 0 ? Math.max(6, (pontos / maxVal) * 80) : 6
               const barBg = isHoje
-                ? 'var(--accent-grad)'
+                ? 'var(--duo-blue)'
                 : pontos >= 70
                   ? 'rgba(0,157,255,0.8)'
                   : pontos >= 40

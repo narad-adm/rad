@@ -121,7 +121,7 @@ export default function DecimoPasso() {
           </p>
         </div>
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-             style={{ background: 'linear-gradient(135deg, #8a81e5, #b280e6)' }}>
+             style={{ background: 'var(--duo-purple)' }}>
           <ClipboardText size={22} weight="duotone" color="white" />
         </div>
       </div>

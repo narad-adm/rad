@@ -67,7 +67,7 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
           </h1>
         </div>
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-             style={{ background: 'var(--accent-grad)' }}>
+             style={{ background: 'var(--duo-blue)' }}>
           <BookOpenText size={22} weight="duotone" color="white" />
         </div>
       </div>

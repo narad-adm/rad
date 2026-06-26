@@ -70,7 +70,7 @@ export default function CadastroPage() {
 
       <div className="text-center mb-8">
         <div className="w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center"
-             style={{ background: 'var(--accent-grad)', boxShadow: '0 8px 32px rgba(0,157,255,0.35)' }}>
+             style={{ background: 'var(--duo-blue)', boxShadow: '0 4px 16px rgba(28,176,246,0.25)' }}>
           <Waves size={28} weight="duotone" color="white" />
         </div>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)' }}>Criar conta no RAD</h1>

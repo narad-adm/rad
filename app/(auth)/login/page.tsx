@@ -32,7 +32,7 @@ export default function LoginPage() {
       {/* Logo */}
       <div className="text-center mb-10">
         <div className="w-20 h-20 rounded-3xl mx-auto mb-4 flex items-center justify-center"
-             style={{ background: 'var(--accent-grad)', boxShadow: '0 8px 32px rgba(0,157,255,0.35)' }}>
+             style={{ background: 'var(--duo-blue)', boxShadow: '0 4px 16px rgba(28,176,246,0.25)' }}>
           <Waves size={36} weight="duotone" color="white" />
         </div>
         <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-1)' }}>RAD</h1>

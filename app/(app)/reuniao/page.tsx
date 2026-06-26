@@ -117,10 +117,7 @@ export default function ReuniaoPage() {
           <p style={{ fontSize: '0.875rem', color: 'var(--text-2)' }}>{tipoSelecionado?.nome}</p>
         </div>
         <div className="card pop-in text-center" style={{ padding: '2rem 3rem' }}>
-          <div style={{
-            fontSize: '3rem', fontWeight: 900, lineHeight: 1,
-            background: 'var(--accent-grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          }}>
+          <div style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1, color: 'var(--duo-blue)' }}>
             +{pontosGanhos}
           </div>
           <div style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.5rem' }}>
