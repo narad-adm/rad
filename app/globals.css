@@ -117,15 +117,15 @@ html.dark {
 
   /* ── Chunky button (Duolingo style — solid shadow below) */
   .btn-primary {
-    background: var(--accent-grad);
+    background: var(--duo-blue);
     color: white;
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
     font-size: 1rem;
-    padding: 0.875rem 1.5rem;
-    border-radius: 14px;
+    height: 48px;
+    padding: 0 1.5rem;
+    border-radius: 13px;
     border: none;
-    border-bottom: 4px solid var(--shadow-btn);
     width: 100%;
     cursor: pointer;
     display: inline-flex;
@@ -133,13 +133,13 @@ html.dark {
     justify-content: center;
     gap: 0.5rem;
     text-decoration: none;
-    transition: transform 0.1s, border-bottom-width 0.1s;
+    transition: filter 0.15s, transform 0.1s;
   }
-  .btn-primary:hover  { transform: translateY(-2px); }
-  .btn-primary:active { transform: translateY(2px); border-bottom-width: 2px; }
+  .btn-primary:hover  { filter: brightness(1.08); }
+  .btn-primary:active { transform: scale(0.98); filter: brightness(0.95); }
   .btn-primary:disabled {
-    opacity: 0.5; cursor: not-allowed;
-    transform: none; border-bottom-width: 4px;
+    opacity: 0.45; cursor: not-allowed;
+    transform: none; filter: none;
   }
 
   .btn-outline {
