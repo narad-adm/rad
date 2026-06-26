@@ -122,11 +122,11 @@ html.dark {
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
     font-size: 1rem;
-    height: 48px;
     padding: 0 1.5rem;
     border-radius: 13px;
     border: none;
-    box-shadow: 0px 4px 0px var(--shadow-btn);
+    border-bottom: 4px solid var(--shadow-btn);
+    min-height: 48px;
     width: 100%;
     cursor: pointer;
     display: inline-flex;
@@ -134,13 +134,13 @@ html.dark {
     justify-content: center;
     gap: 0.5rem;
     text-decoration: none;
-    transition: box-shadow 0.1s, transform 0.1s;
+    transition: border-bottom-width 0.1s, transform 0.1s;
   }
   .btn-primary:hover  { filter: brightness(1.06); }
-  .btn-primary:active { transform: translateY(2px); box-shadow: 0px 2px 0px var(--shadow-btn); }
+  .btn-primary:active { transform: translateY(2px); border-bottom-width: 1px; }
   .btn-primary:disabled {
     opacity: 0.45; cursor: not-allowed;
-    transform: none; box-shadow: 0px 4px 0px var(--shadow-btn);
+    transform: none; border-bottom-width: 4px;
   }
 
   .btn-outline {
