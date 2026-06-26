@@ -39,6 +39,22 @@ export interface PassoPergunta {
   passo: number
   ordem: number
   pergunta: string
+  topico?: string | null
+}
+
+export const NOMES_PASSOS: Record<number, string> = {
+  1:  'Primeiro Passo',
+  2:  'Segundo Passo',
+  3:  'Terceiro Passo',
+  4:  'Quarto Passo',
+  5:  'Quinto Passo',
+  6:  'Sexto Passo',
+  7:  'Sétimo Passo',
+  8:  'Oitavo Passo',
+  9:  'Nono Passo',
+  10: 'Décimo Passo',
+  11: 'Décimo Primeiro Passo',
+  12: 'Décimo Segundo Passo',
 }
 
 export interface RespostaPasso {
