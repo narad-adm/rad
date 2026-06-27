@@ -87,104 +87,112 @@ export default function DashboardClient({
         </div>
       </div>
 
-      {/* ── Tempo Limpo ────────────────────────────────── */}
-      <div className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      {/* ── Card de progresso unificado ────────────────── */}
+      <div style={{
+        background: 'var(--bg-card)',
+        border: '2.5px solid var(--border)',
+        borderRadius: 20,
+        boxShadow: '0 4px 0 var(--border)',
+        overflow: 'hidden',
+      }}>
+
+        {/* Linha 1: Tempo limpo */}
         <div style={{
-          width: 56, height: 56, borderRadius: 18, flexShrink: 0,
-          background: 'var(--duo-blue-bg)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          border: '2.5px solid var(--duo-blue)',
+          padding: '1rem 1.125rem',
+          display: 'flex', alignItems: 'center', gap: '0.875rem',
+          borderBottom: '2px solid var(--border)',
         }}>
-          <Leaf size={28} weight="duotone" color="var(--duo-blue)" />
-        </div>
-        <div style={{ flex: 1 }}>
-          <p style={{ color: 'var(--text-3)', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.4rem' }}>
-            TEMPO LIMPO
-          </p>
-          <div style={{ display: 'flex', gap: '0.875rem', alignItems: 'baseline' }}>
-            {anos > 0 && (
-              <span>
-                <span style={{ fontSize: '1.875rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{anos}</span>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>ano{anos !== 1 ? 's' : ''}</span>
-              </span>
-            )}
-            {(anos > 0 || meses > 0) && (
-              <span>
-                <span style={{ fontSize: '1.875rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{meses}</span>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>mes{meses !== 1 ? 'es' : ''}</span>
-              </span>
-            )}
-            <span>
-              <span style={{ fontSize: anos === 0 && meses === 0 ? '2.5rem' : '1.875rem', fontWeight: 900, color: 'var(--duo-blue)', lineHeight: 1 }}>{dias}</span>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>dia{dias !== 1 ? 's' : ''}</span>
-            </span>
+          <div style={{
+            width: 44, height: 44, borderRadius: 14, flexShrink: 0,
+            background: 'var(--duo-blue-bg)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: '2px solid var(--duo-blue)',
+          }}>
+            <Leaf size={22} weight="duotone" color="var(--duo-blue)" />
           </div>
-          <p style={{ color: 'var(--text-3)', fontSize: '0.75rem', fontWeight: 700, marginTop: '0.375rem', display: 'flex', alignItems: 'center', gap: 4 }}>
-            Só por hoje
-            <Heart size={13} weight="fill" color="var(--duo-blue)" />
-          </p>
-        </div>
-      </div>
-
-      {/* ── Esta semana ────────────────────────────────── */}
-      <SectionHeader
-        label="Esta semana"
-        right={streak > 0
-          ? <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--duo-orange)', fontWeight: 800, fontSize: '0.85rem' }}>
-              <Fire size={16} weight="fill" />
-              {streak} dias
-            </div>
-          : undefined
-        }
-      />
-
-      <div className="card" style={{ padding: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          {DIAS_SEMANA_SHORT.map((label, i) => {
-            const type = getDayType(i)
-            const isActive = type === 'done' || type === 'today-done'
-            const isToday = type === 'today-done' || type === 'today-empty'
-            return (
-              <div key={i} className="day-col">
-                <span className="day-label" style={{
-                  color: isToday ? 'var(--duo-blue)' : isActive ? 'var(--duo-orange)' : 'var(--duo-gray)',
-                }}>
-                  {label}
+          <div style={{ flex: 1 }}>
+            <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.25rem' }}>
+              TEMPO LIMPO
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
+              {anos > 0 && (
+                <span>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{anos}</span>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>ano{anos !== 1 ? 's' : ''}</span>
                 </span>
-                <DayCircle type={type} />
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* ── XP de hoje ─────────────────────────────────── */}
-      <SectionHeader
-        label="XP de hoje"
-        right={
-          <span style={{ fontWeight: 800, fontSize: '0.8rem', color: 'var(--text-2)' }}>
-            {nivel.nivel}
-          </span>
-        }
-      />
-
-      <div className="card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.875rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, borderRadius: 14, background: 'rgba(255,200,0,0.15)' }}>
-            <LightningA size={24} weight="fill" color="var(--duo-yellow)" />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-              <span style={{ fontSize: '1.875rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{pontuacaoHoje}</span>
-              <span style={{ color: 'var(--text-3)', fontSize: '0.875rem', fontWeight: 700 }}>/100 XP</span>
+              )}
+              {(anos > 0 || meses > 0) && (
+                <span>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{meses}</span>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>mes{meses !== 1 ? 'es' : ''}</span>
+                </span>
+              )}
+              <span>
+                <span style={{ fontSize: anos === 0 && meses === 0 ? '2rem' : '1.5rem', fontWeight: 900, color: 'var(--duo-blue)', lineHeight: 1 }}>{dias}</span>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-3)', marginLeft: 3 }}>dia{dias !== 1 ? 's' : ''}</span>
+              </span>
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-3)', fontWeight: 600 }}>{nivel.mensagem}</div>
+          </div>
+          {streak > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--duo-orange)', fontWeight: 800, fontSize: '0.85rem', flexShrink: 0 }}>
+              <Fire size={16} weight="fill" />
+              {streak}
+            </div>
+          )}
+        </div>
+
+        {/* Linha 2: Esta semana */}
+        <div style={{
+          padding: '0.875rem 1.125rem',
+          borderBottom: '2px solid var(--border)',
+        }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.625rem' }}>
+            ESTA SEMANA
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            {DIAS_SEMANA_SHORT.map((label, i) => {
+              const type = getDayType(i)
+              const isActive = type === 'done' || type === 'today-done'
+              const isToday = type === 'today-done' || type === 'today-empty'
+              return (
+                <div key={i} className="day-col">
+                  <span className="day-label" style={{
+                    color: isToday ? 'var(--duo-blue)' : isActive ? 'var(--duo-orange)' : 'var(--duo-gray)',
+                  }}>
+                    {label}
+                  </span>
+                  <DayCircle type={type} />
+                </div>
+              )
+            })}
           </div>
         </div>
-        <div className="duo-bar-wrap">
-          <div className="duo-bar-track" />
-          <div className="duo-bar-fill" style={{ width: `${Math.max(5, Math.min(100, porcentagem))}%` }}>
-            <div className="duo-bar-shine" />
+
+        {/* Linha 3: XP de hoje */}
+        <div style={{ padding: '0.875rem 1.125rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+            <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em' }}>
+              XP DE HOJE
+            </p>
+            <span style={{ fontWeight: 800, fontSize: '0.72rem', color: 'var(--text-3)' }}>{nivel.nivel}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.625rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 10, background: 'rgba(255,200,0,0.15)', flexShrink: 0 }}>
+              <LightningA size={20} weight="fill" color="var(--duo-yellow)" />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                <span style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)', lineHeight: 1 }}>{pontuacaoHoje}</span>
+                <span style={{ color: 'var(--text-3)', fontSize: '0.75rem', fontWeight: 700 }}>/100 XP</span>
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 600 }}>{nivel.mensagem}</div>
+            </div>
+          </div>
+          <div className="duo-bar-wrap">
+            <div className="duo-bar-track" />
+            <div className="duo-bar-fill" style={{ width: `${Math.max(5, Math.min(100, porcentagem))}%` }}>
+              <div className="duo-bar-shine" />
+            </div>
           </div>
         </div>
       </div>
@@ -238,22 +246,18 @@ export default function DashboardClient({
           accentDark="#58A700"
           accentBg="rgba(88,204,2,0.12)"
         />
+        <ActivityCard
+          href="/passos"
+          icon={<ChatCircleText size={28} weight="duotone" />}
+          label="Guia dos passos"
+          sublabel="Responda perguntas e ganhe XP"
+          xp="+15 XP"
+          done={false}
+          accent="#D84F9E"
+          accentDark="#ac016a"
+          accentBg="rgba(216,79,158,0.12)"
+        />
       </div>
-
-      {/* ── Guia dos Passos ────────────────────────────── */}
-      <SectionHeader label="Guia dos Passos" />
-
-      <ActivityCard
-        href="/passos"
-        icon={<ChatCircleText size={28} weight="duotone" />}
-        label="Guia dos passos"
-        sublabel="Responda perguntas e ganhe XP"
-        xp="+15 XP"
-        done={false}
-        accent="#D84F9E"
-        accentDark="#ac016a"
-        accentBg="rgba(216,79,158,0.12)"
-      />
 
     </div>
   )
@@ -288,7 +292,7 @@ function ActivityCard({
       <div style={{
         width: 52, height: 52, borderRadius: 14, flexShrink: 0,
         background: done ? `${accent}25` : accentBg,
-        color: done ? accent : accent,
+        color: accent,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         {icon}
