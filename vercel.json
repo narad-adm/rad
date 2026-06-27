@@ -1,0 +1,6 @@
+{
+  "crons": [{
+    "path": "/api/notificacoes/lembrete-diario",
+    "schedule": "0 22 * * *"
+  }]
+}
