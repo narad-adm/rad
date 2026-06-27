@@ -8,6 +8,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
 import ThemeToggle from '@/components/app/ThemeToggle'
+import NotificacoesToggle from '@/components/app/NotificacoesToggle'
 
 interface Props {
   nome: string
@@ -79,6 +80,7 @@ export default function DashboardClient({
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <NotificacoesToggle />
           <button onClick={handleLogout} className="theme-toggle" aria-label="Sair">
             <SignOut size={18} weight="bold" />
           </button>
