@@ -6,7 +6,7 @@ import { House, CalendarCheck, BookOpenText, ClipboardText, ChartBar } from '@ph
 const items = [
   { href: '/dashboard',    label: 'Início',    Icon: House          },
   { href: '/reuniao',      label: 'Reunião',   Icon: CalendarCheck  },
-  { href: '/sohoje',       label: 'Só Hoje',   Icon: BookOpenText   },
+  { href: '/passos',        label: 'Guia',      Icon: BookOpenText   },
   { href: '/decimo-passo', label: '10° Passo', Icon: ClipboardText  },
   { href: '/relatorios',   label: 'Histórico', Icon: ChartBar       },
 ]
