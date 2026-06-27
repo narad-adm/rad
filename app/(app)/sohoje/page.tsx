@@ -12,9 +12,18 @@ export default async function SoHojePage() {
   const dia = hoje.getDate()
 
   const [textoData, leituraData] = await Promise.all([
-    supabase.from('so_por_hoje').select('*').eq('mes', mes).eq('dia', dia).single(),
-    supabase.from('leituras_spj').select('id').eq('usuario_id', user.id)
-      .eq('data', hoje.toISOString().split('T')[0]).single(),
+    supabase
+      .from('so_por_hoje')
+      .select('id, mes, dia, titulo, citacao, texto, reflexao, afirmacao')
+      .eq('mes', mes)
+      .eq('dia', dia)
+      .single(),
+    supabase
+      .from('leituras_spj')
+      .select('id')
+      .eq('usuario_id', user.id)
+      .eq('data', hoje.toISOString().split('T')[0])
+      .single(),
   ])
 
   return (

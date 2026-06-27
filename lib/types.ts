@@ -30,8 +30,10 @@ export interface SoPorHoje {
   mes: number
   dia: number
   titulo: string
+  citacao: string | null
   texto: string
-  reflexao?: string
+  reflexao: string | null
+  afirmacao: string | null
 }
 
 export interface PassoPergunta {
