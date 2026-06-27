@@ -1,7 +1,8 @@
 'use client'
+import { useState } from 'react'
 import Link from 'next/link'
 import {
-  Fire, CheckCircle, HandWaving, Heart,
+  Fire, HandWaving, Heart,
   CalendarCheck, BookOpenText, ClipboardText, ChatCircleText,
   SignOut, CaretRight, Leaf, LightningA,
 } from '@phosphor-icons/react'
@@ -9,6 +10,9 @@ import { createClient } from '@/lib/supabase/client'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
 import ThemeToggle from '@/components/app/ThemeToggle'
 import NotificacoesToggle from '@/components/app/NotificacoesToggle'
+import HumorBalloon from '@/components/app/HumorBalloon'
+import ModalHumor from '@/components/app/ModalHumor'
+import type { HumorKey } from '@/lib/humores'
 
 interface Props {
   nome: string
@@ -22,6 +26,9 @@ interface Props {
   reunioesHoje: number
   leuHoje: boolean
   inventarioHoje: boolean
+  jaRespondeuHoje: boolean
+  humorHoje: string | null
+  userId: string
 }
 
 const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
@@ -29,7 +36,13 @@ const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 export default function DashboardClient({
   nome, diasLimpo, pontuacaoHoje, porcentagem,
   nivel, streak, streakMax, reunioesHoje, leuHoje, inventarioHoje,
+  jaRespondeuHoje: jaRespondeuInicial, humorHoje: humorInicial, userId,
 }: Props) {
+  const supabase = createClient()
+  const [modalHumorAberto, setModalHumorAberto] = useState(false)
+  const [jaRespondeuHoje, setJaRespondeuHoje] = useState(jaRespondeuInicial)
+  const [humorHoje, setHumorHoje] = useState<string | null>(humorInicial)
+
   const agora = new Date()
   const diaSemana = DIAS_SEMANA[agora.getDay()]
   const dia = agora.getDate()
@@ -49,8 +62,18 @@ export default function DashboardClient({
     return daysBack < streak ? 'done' : 'past-empty'
   }
 
+  async function salvarHumor(humor: HumorKey) {
+    const hoje = new Date().toISOString().split('T')[0]
+    await supabase.from('humores_diarios').upsert(
+      { usuario_id: userId, data: hoje, humor },
+      { onConflict: 'usuario_id,data' }
+    )
+    setJaRespondeuHoje(true)
+    setHumorHoje(humor)
+    setModalHumorAberto(false)
+  }
+
   async function handleLogout() {
-    const supabase = createClient()
     await supabase.auth.signOut()
     window.location.href = '/login'
   }
@@ -259,6 +282,16 @@ export default function DashboardClient({
         />
       </div>
 
+      <HumorBalloon
+        jaRespondeuHoje={jaRespondeuHoje}
+        humorHoje={humorHoje}
+        onAbrir={() => setModalHumorAberto(true)}
+      />
+      <ModalHumor
+        aberto={modalHumorAberto}
+        onFechar={() => setModalHumorAberto(false)}
+        onSalvar={salvarHumor}
+      />
     </div>
   )
 }

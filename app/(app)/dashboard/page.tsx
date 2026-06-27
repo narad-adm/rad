@@ -7,13 +7,14 @@ async function getDadosDashboard(userId: string) {
   const supabase = await createClient()
   const hoje = new Date().toISOString().split('T')[0]
 
-  const [perfil, pontuacao, streak, checkins, leitura, inventario] = await Promise.all([
+  const [perfil, pontuacao, streak, checkins, leitura, inventario, humor] = await Promise.all([
     supabase.from('perfis').select('*').eq('id', userId).single(),
     supabase.from('pontuacao_diaria').select('*').eq('usuario_id', userId).eq('data', hoje).single(),
     supabase.from('streaks').select('*').eq('usuario_id', userId).single(),
     supabase.from('checkins_reuniao').select('id').eq('usuario_id', userId).eq('data', hoje),
     supabase.from('leituras_spj').select('id').eq('usuario_id', userId).eq('data', hoje).single(),
     supabase.from('inventarios_diarios').select('id').eq('usuario_id', userId).eq('data', hoje).single(),
+    supabase.from('humores_diarios').select('humor').eq('usuario_id', userId).eq('data', hoje).single(),
   ])
 
   return {
@@ -24,6 +25,8 @@ async function getDadosDashboard(userId: string) {
     reunioesHoje: checkins.data?.length ?? 0,
     leuHoje: !!leitura.data,
     inventarioHoje: !!inventario.data,
+    jaRespondeuHoje: !!humor.data,
+    humorHoje: humor.data?.humor ?? null,
   }
 }
 
@@ -52,6 +55,9 @@ export default async function DashboardPage() {
       reunioesHoje={dados.reunioesHoje}
       leuHoje={dados.leuHoje}
       inventarioHoje={dados.inventarioHoje}
+      jaRespondeuHoje={dados.jaRespondeuHoje}
+      humorHoje={dados.humorHoje}
+      userId={user.id}
     />
   )
 }
