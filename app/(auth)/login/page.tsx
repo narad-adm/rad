@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Eye, EyeSlash } from '@phosphor-icons/react'
 
 export default function LoginPage() {
@@ -27,31 +26,47 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
-         style={{ background: 'var(--bg)' }}>
+    <div style={{
+      minHeight: '100dvh',
+      background: 'var(--bg)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem 1.25rem',
+    }}>
 
-      {/* Logo */}
-      <div className="text-center mb-10">
-        <Image
-          src="/icons/na_blue_book_final_512.png"
-          alt="RAD"
-          width={80}
-          height={80}
-          style={{ borderRadius: 20, margin: '0 auto 1rem' }}
-        />
-        <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-1)' }}>RAD</h1>
-        <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>
+      {/* Hero */}
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <h1 style={{
+          fontSize: '3rem',
+          fontWeight: 900,
+          color: 'var(--duo-blue)',
+          letterSpacing: '-0.04em',
+          lineHeight: 1,
+          marginBottom: '0.375rem',
+        }}>
+          RAD
+        </h1>
+        <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-3)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
           Recuperação Ativa Diária
         </p>
       </div>
 
       {/* Card */}
-      <div className="card w-full" style={{ maxWidth: 400 }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-1)', marginBottom: '1.5rem' }}>
-          Entrar
+      <div style={{
+        width: '100%',
+        maxWidth: 400,
+        background: 'var(--bg-card)',
+        border: '2px solid var(--border)',
+        borderRadius: 24,
+        padding: '1.75rem 1.5rem',
+      }}>
+        <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-1)', marginBottom: '1.5rem' }}>
+          Entrar na conta
         </h2>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
             <label className="label">E-mail</label>
             <input
@@ -67,7 +82,7 @@ export default function LoginPage() {
 
           <div>
             <label className="label">Senha</label>
-            <div className="relative">
+            <div style={{ position: 'relative' }}>
               <input
                 type={showSenha ? 'text' : 'password'}
                 className="input-field"
@@ -78,10 +93,15 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 style={{ paddingRight: '3rem' }}
               />
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setShowSenha(!showSenha)}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-                style={{ color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                style={{
+                  position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                  color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center',
+                }}
+              >
                 {showSenha ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
               </button>
             </div>
@@ -89,28 +109,50 @@ export default function LoginPage() {
 
           {erro && (
             <div style={{
-              background: 'rgba(239,68,68,0.1)', color: '#ef4444',
-              border: '1px solid rgba(239,68,68,0.2)',
-              borderRadius: 12, padding: '0.75rem 1rem', fontSize: '0.875rem',
+              background: 'rgba(239,68,68,0.08)',
+              color: '#ef4444',
+              border: '1.5px solid rgba(239,68,68,0.2)',
+              borderRadius: 12,
+              padding: '0.75rem 1rem',
+              fontSize: '0.875rem',
+              fontWeight: 600,
             }}>
               {erro}
             </div>
           )}
 
-          <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '0.5rem' }}>
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary"
+            style={{ marginTop: '0.25rem' }}
+          >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
-        <p className="text-center text-sm mt-6" style={{ color: 'var(--text-3)' }}>
-          Ainda não tem conta?{' '}
-          <Link href="/cadastro" style={{ color: 'var(--accent)', fontWeight: 800, textDecoration: 'none' }}>
-            Cadastre-se
-          </Link>
-        </p>
+        {/* Divider */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '0.75rem',
+          margin: '1.25rem 0',
+        }}>
+          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-3)' }}>ou</span>
+          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+        </div>
+
+        <Link href="/cadastro" style={{ textDecoration: 'none' }}>
+          <button
+            type="button"
+            className="btn-ghost"
+            style={{ width: '100%' }}
+          >
+            Criar nova conta
+          </button>
+        </Link>
       </div>
 
-      <p className="text-center text-xs mt-8" style={{ color: 'var(--text-3)' }}>
+      <p style={{ color: 'var(--text-3)', fontSize: '0.72rem', marginTop: '2rem', fontWeight: 600, letterSpacing: '0.04em' }}>
         Narcóticos Anônimos • Só por hoje
       </p>
     </div>
