@@ -2,7 +2,8 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { Eye, EyeSlash, Waves } from '@phosphor-icons/react'
+import Image from 'next/image'
+import { Eye, EyeSlash } from '@phosphor-icons/react'
 
 export default function CadastroPage() {
   const [nome, setNome] = useState('')
@@ -40,23 +41,18 @@ export default function CadastroPage() {
     }
 
     if (data.user) {
-      const { error: perfilError } = await supabase.from('perfis').insert({
-        id: data.user.id,
-        nome: nome.trim(),
-        data_limpeza: dataLimpeza,
+      const res = await fetch('/api/cadastro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: data.user.id, nome, dataLimpeza }),
       })
 
-      if (perfilError) {
-        setErro('Erro ao salvar perfil. Tente novamente.')
+      if (!res.ok) {
+        const json = await res.json()
+        setErro(json.error ?? 'Erro ao salvar perfil. Tente novamente.')
         setLoading(false)
         return
       }
-
-      await supabase.from('streaks').insert({
-        usuario_id: data.user.id,
-        streak_atual: 0,
-        streak_maximo: 0,
-      })
 
       window.location.href = '/dashboard'
     }
@@ -69,13 +65,16 @@ export default function CadastroPage() {
          style={{ background: 'var(--bg)' }}>
 
       <div className="text-center mb-8">
-        <div className="w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center"
-             style={{ background: 'var(--duo-blue)', boxShadow: '0 4px 16px rgba(28,176,246,0.25)' }}>
-          <Waves size={28} weight="duotone" color="white" />
-        </div>
+        <Image
+          src="/icons/na_blue_book_final_512.png"
+          alt="RAD"
+          width={72}
+          height={72}
+          style={{ borderRadius: 18, margin: '0 auto 0.75rem' }}
+        />
         <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-1)' }}>Criar conta no RAD</h1>
         <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>
-          Comece sua jornada de recuperação ativa
+          Começe a sua jornada de recuperação ativa diária
         </p>
       </div>
 
@@ -128,7 +127,7 @@ export default function CadastroPage() {
           </div>
 
           <div>
-            <label className="label">Data de limpeza</label>
+            <label className="label">Início da recuperação</label>
             <input
               type="date"
               className="input-field"
@@ -154,7 +153,7 @@ export default function CadastroPage() {
           )}
 
           <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '0.5rem' }}>
-            {loading ? 'Criando conta...' : 'Começar minha recuperação'}
+            {loading ? 'Criando conta...' : 'Criar conta'}
           </button>
         </form>
 
