@@ -8,7 +8,14 @@ export default async function RelatoriosPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [perfil, pontuacoes, streak, checkins, leituras, respostas, inventarios] = await Promise.all([
+  const agora = new Date()
+  const ano = agora.getFullYear()
+  const mes = agora.getMonth()
+  const inicioMes = `${ano}-${String(mes + 1).padStart(2, '0')}-01`
+  const ultimoDia = new Date(ano, mes + 1, 0).getDate()
+  const fimMes = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`
+
+  const [perfil, pontuacoes, streak, checkins, leituras, respostas, inventarios, humoresMes] = await Promise.all([
     supabase.from('perfis').select('*').eq('id', user.id).single(),
     supabase.from('pontuacao_diaria').select('*')
       .eq('usuario_id', user.id).order('data', { ascending: false }).limit(30),
@@ -21,6 +28,10 @@ export default async function RelatoriosPage() {
       .eq('usuario_id', user.id),
     supabase.from('inventarios_diarios').select('data')
       .eq('usuario_id', user.id).order('data', { ascending: false }).limit(30),
+    supabase.from('humores_diarios').select('data, humor')
+      .eq('usuario_id', user.id)
+      .gte('data', inicioMes)
+      .lte('data', fimMes),
   ])
 
   const diasLimpo = perfil.data ? calcularDiasLimpo(perfil.data.data_limpeza) : 0
@@ -35,6 +46,8 @@ export default async function RelatoriosPage() {
       totalLeituras={leituras.data?.length ?? 0}
       totalRespostas={respostas.data?.length ?? 0}
       totalInventarios={inventarios.data?.length ?? 0}
+      humoresMes={humoresMes.data ?? []}
+      anoMes={{ ano, mes }}
     />
   )
 }
