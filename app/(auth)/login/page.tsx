@@ -2,7 +2,8 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { Eye, EyeSlash, Waves } from '@phosphor-icons/react'
+import Image from 'next/image'
+import { Eye, EyeSlash } from '@phosphor-icons/react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -31,10 +32,13 @@ export default function LoginPage() {
 
       {/* Logo */}
       <div className="text-center mb-10">
-        <div className="w-20 h-20 rounded-3xl mx-auto mb-4 flex items-center justify-center"
-             style={{ background: 'var(--duo-blue)', boxShadow: '0 4px 16px rgba(28,176,246,0.25)' }}>
-          <Waves size={36} weight="duotone" color="white" />
-        </div>
+        <Image
+          src="/icons/na_blue_book_final_512.png"
+          alt="RAD"
+          width={80}
+          height={80}
+          style={{ borderRadius: 20, margin: '0 auto 1rem' }}
+        />
         <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-1)' }}>RAD</h1>
         <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', marginTop: '0.25rem' }}>
           Recuperação Ativa Diária
