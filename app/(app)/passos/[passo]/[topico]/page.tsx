@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import ModoFocoClient from '@/components/app/ModoFocoClient'
 import { slugify } from '@/lib/utils'
 import { NOMES_PASSOS } from '@/lib/types'
+import { decrypt } from '@/lib/crypto'
 
 type Params = Promise<{ passo: string; topico: string }>
 
@@ -42,8 +43,7 @@ export default async function ModoFocoPage({ params }: { params: Params }) {
 
   const respostasMap: Record<string, { id: string; texto: string }> = {}
   for (const r of respostasData ?? []) {
-    // keep latest by overwriting (data comes unordered, but we just need one)
-    respostasMap[r.pergunta_id] = { id: r.id, texto: r.resposta }
+    respostasMap[r.pergunta_id] = { id: r.id, texto: decrypt(r.resposta) }
   }
 
   return (

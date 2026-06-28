@@ -15,7 +15,7 @@ export default async function RelatoriosPage() {
   const ultimoDia = new Date(ano, mes + 1, 0).getDate()
   const fimMes = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`
 
-  const [perfil, pontuacoes, streak, checkins, leituras, respostas, inventarios, humoresMes] = await Promise.all([
+  const [perfil, pontuacoes, streak, checkins, leituras, respostas, inventarios, humoresMes, inventariosMes] = await Promise.all([
     supabase.from('perfis').select('*').eq('id', user.id).single(),
     supabase.from('pontuacao_diaria').select('*')
       .eq('usuario_id', user.id).order('data', { ascending: false }).limit(30),
@@ -28,6 +28,8 @@ export default async function RelatoriosPage() {
       .eq('usuario_id', user.id),
     supabase.from('inventarios_diarios').select('data')
       .eq('usuario_id', user.id).order('data', { ascending: false }).limit(30),
+    supabase.from('inventarios_diarios').select('data')
+      .eq('usuario_id', user.id).gte('data', inicioMes).lte('data', fimMes),
     supabase.from('humores_diarios').select('data, humor')
       .eq('usuario_id', user.id)
       .gte('data', inicioMes)
@@ -47,6 +49,7 @@ export default async function RelatoriosPage() {
       totalRespostas={respostas.data?.length ?? 0}
       totalInventarios={inventarios.data?.length ?? 0}
       humoresMes={humoresMes.data ?? []}
+      diasComInventario={(inventariosMes.data ?? []).map((i: any) => i.data)}
       anoMes={{ ano, mes }}
     />
   )

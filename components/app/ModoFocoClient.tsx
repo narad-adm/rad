@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, CheckCircle } from '@phosphor-icons/react'
 import { createClient } from '@/lib/supabase/client'
+import { inserirRespostaPasso, atualizarRespostaPasso } from '@/app/actions/respostas'
 import type { PassoPergunta } from '@/lib/types'
 
 interface RespostaInfo {
@@ -73,14 +74,10 @@ export default function ModoFocoClient({
     setSalvando(true)
     try {
       if (salvo) {
-        await supabase.from('respostas_passos')
-          .update({ resposta: texto })
-          .eq('id', salvo.id)
+        await atualizarRespostaPasso(salvo.id, texto)
         setRespostasMap(prev => ({ ...prev, [perguntaId]: { id: salvo.id, texto } }))
       } else {
-        const { data } = await supabase.from('respostas_passos')
-          .insert({ usuario_id: userId, pergunta_id: perguntaId, resposta: texto, pontos_ganhos: 15 })
-          .select('id').single()
+        const data = await inserirRespostaPasso(perguntaId, texto)
         if (data) {
           setRespostasMap(prev => ({ ...prev, [perguntaId]: { id: data.id, texto } }))
           await atualizarPontuacao()

@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { ClipboardText, CheckCircle, Confetti, Star, MagnifyingGlass, HandsPraying, Heart, Warning, Sparkle, Note } from '@phosphor-icons/react'
+import { buscarInventarioHoje, salvarInventario } from '@/app/actions/inventario'
 
 const PERGUNTAS = [
   { key: 'honestidade',   titulo: 'Honestidade',      pergunta: 'Onde fui honesto hoje? E onde fui desonesto?' },
@@ -30,7 +30,6 @@ const PERGUNTA_COLORS: Record<string, string> = {
 
 export default function DecimoPasso() {
   const router = useRouter()
-  const supabase = createClient()
   const [jaFez, setJaFez] = useState(false)
   const [respostas, setRespostas] = useState<Record<string, string>>({
     honestidade: '', admissoes: '', contribuicoes: '', doenca: '', acoes_limpeza: ''
@@ -41,21 +40,18 @@ export default function DecimoPasso() {
 
   useEffect(() => {
     async function verificar() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/login'); return }
-
-      const hoje = new Date().toISOString().split('T')[0]
-      const { data } = await supabase.from('inventarios_diarios')
-        .select('*').eq('usuario_id', user.id).eq('data', hoje).single()
-
+      const data = await buscarInventarioHoje()
+      if (data === null && typeof window !== 'undefined') {
+        // null pode ser "não autenticado" ou "não preencheu hoje"
+      }
       if (data) {
         setJaFez(true)
         setRespostas({
-          honestidade:   data.honestidade   ?? '',
-          admissoes:     data.admissoes     ?? '',
-          contribuicoes: data.contribuicoes ?? '',
-          doenca:        data.doenca        ?? '',
-          acoes_limpeza: data.acoes_limpeza ?? '',
+          honestidade:   data.honestidade,
+          admissoes:     data.admissoes,
+          contribuicoes: data.contribuicoes,
+          doenca:        data.doenca,
+          acoes_limpeza: data.acoes_limpeza,
         })
       }
       setLoading(false)
@@ -65,30 +61,7 @@ export default function DecimoPasso() {
 
   async function handleSalvar() {
     setSalvando(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    const hoje = new Date().toISOString().split('T')[0]
-
-    await supabase.from('inventarios_diarios').insert({
-      usuario_id: user.id, data: hoje, ...respostas, pontos_ganhos: 25,
-    })
-
-    const { data } = await supabase.from('pontuacao_diaria')
-      .select('*').eq('usuario_id', user.id).eq('data', hoje).single()
-
-    if (data) {
-      await supabase.from('pontuacao_diaria').update({
-        pontos_total: Math.min(100, data.pontos_total + 25),
-        inventarios: data.inventarios + 1,
-        atualizado_em: new Date().toISOString(),
-      }).eq('id', data.id)
-    } else {
-      await supabase.from('pontuacao_diaria').insert({
-        usuario_id: user.id, data: hoje, pontos_total: 25, inventarios: 1,
-      })
-    }
-
+    await salvarInventario(respostas)
     setJaFez(true)
     setCelebrar(true)
     setSalvando(false)
