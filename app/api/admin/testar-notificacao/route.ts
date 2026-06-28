@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({ titulo, corpo, url: '/', usuario_id }),
   })
 
-  const data = await res.json()
-  return NextResponse.json(data)
+  const text = await res.text()
+  let data: unknown
+  try { data = JSON.parse(text) } catch { data = { error: text || `HTTP ${res.status}` } }
+  return NextResponse.json(data, { status: res.status })
 }
