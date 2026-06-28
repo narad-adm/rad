@@ -110,9 +110,12 @@ function ModalSenha({ onFechar }: { onFechar: () => void }) {
         </div>
 
         {ok ? (
-          <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-            <CheckCircle size={40} weight="duotone" color="var(--duo-blue)" />
-            <p style={{ fontWeight: 800, color: 'var(--text-1)', marginTop: '0.75rem' }}>Senha atualizada!</p>
+          <div style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            gap: '0.75rem', padding: '1.5rem 0',
+          }}>
+            <CheckCircle size={48} weight="duotone" color="var(--duo-blue)" />
+            <p style={{ fontWeight: 900, fontSize: '1rem', color: 'var(--text-1)' }}>Senha atualizada!</p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
@@ -277,7 +280,7 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
     await supabase.from('perfis').update({ nome: nome.trim() }).eq('id', userId)
     setSalvandoNome(false)
     setToastNome(true)
-    setTimeout(() => setToastNome(false), 2000)
+    setTimeout(() => { setToastNome(false); router.refresh() }, 1500)
   }
 
   async function salvarData() {
@@ -300,9 +303,14 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
 
   async function toggleNotificacao() {
     if (notifBloqueada || !notifSuportada || notifLoading) return
+    if (!('serviceWorker' in navigator)) { setNotifSuportada(false); return }
     setNotifLoading(true)
     try {
-      const reg = await navigator.serviceWorker.ready
+      const reg = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000)),
+      ]) as ServiceWorkerRegistration
+
       if (notifOn) {
         const sub = await reg.pushManager.getSubscription()
         if (sub) {
@@ -316,6 +324,7 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
       } else {
         const permission = await Notification.requestPermission()
         if (permission !== 'granted') { setNotifBloqueada(true); setNotifLoading(false); return }
+        if (!VAPID_PUBLIC_KEY) { console.error('VAPID key ausente'); setNotifLoading(false); return }
         const sub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
@@ -327,9 +336,10 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
         setNotifOn(true)
       }
     } catch (e) {
-      console.error('Notificação:', e)
+      console.error('Notificação erro:', e)
+    } finally {
+      setNotifLoading(false)
     }
-    setNotifLoading(false)
   }
 
   async function confirmarRanking() {
@@ -449,39 +459,30 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
         }}>
           <SectionTitle>INFORMAÇÕES DA CONTA</SectionTitle>
 
-          {/* Nome */}
-          <div style={{ marginBottom: '1rem' }}>
-            <label className="label" style={{ display: 'block', marginBottom: '0.375rem' }}>Nome</label>
-            <input
-              className="input-field"
-              value={nome}
-              onChange={e => setNome(e.target.value)}
-              style={{ width: '100%', boxSizing: 'border-box' }}
-            />
-            <button
-              className="btn-primary"
-              onClick={salvarNome}
-              disabled={salvandoNome || !nome.trim() || nome.trim() === perfil.nome}
-              style={{ marginTop: '0.5rem', width: '100%' }}
-            >
-              {salvandoNome ? 'Salvando...' : 'Salvar nome'}
-            </button>
-          </div>
+          <label className="label" style={{ display: 'block', marginBottom: '0.375rem' }}>Nome</label>
+          <input
+            className="input-field"
+            value={nome}
+            onChange={e => setNome(e.target.value)}
+            style={{ display: 'block', width: '100%', boxSizing: 'border-box' }}
+          />
+          <button
+            className="btn-primary"
+            onClick={salvarNome}
+            disabled={salvandoNome || !nome.trim() || nome.trim() === perfil.nome}
+            style={{ marginTop: '0.5rem' }}
+          >
+            {salvandoNome ? 'Salvando...' : 'Salvar nome'}
+          </button>
 
-          <div style={{ height: 1, background: 'var(--border)', margin: '0.875rem 0' }} />
-
-          {/* Senha */}
-          <div>
-            <label className="label" style={{ display: 'block', marginBottom: '0.375rem' }}>Senha</label>
-            <button
-              className="btn-outline"
-              onClick={() => setModalSenha(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <LockKey size={16} weight="bold" />
-              Redefinir senha
-            </button>
-          </div>
+          <button
+            className="btn-outline"
+            onClick={() => setModalSenha(true)}
+            style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <LockKey size={16} weight="bold" />
+            Redefinir senha
+          </button>
         </div>
 
         {/* Data de início de recuperação */}
@@ -496,18 +497,19 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
               <p style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-1)', marginBottom: '0.75rem' }}>
                 Limpo(a) desde {new Date(dataLimpeza + 'T12:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
-              <input
-                type="date"
-                className="input-field"
-                value={dataLimpeza}
-                onChange={e => setDataLimpeza(e.target.value)}
-                style={{ width: '100%', boxSizing: 'border-box', marginBottom: '0.5rem' }}
-              />
+              <div style={{ overflow: 'hidden' }}>
+                <input
+                  type="date"
+                  className="input-field"
+                  value={dataLimpeza}
+                  onChange={e => setDataLimpeza(e.target.value)}
+                  style={{ display: 'block', width: '100%', boxSizing: 'border-box', marginBottom: '0.5rem' }}
+                />
+              </div>
               <button
                 className="btn-primary"
                 onClick={salvarData}
                 disabled={salvandoData || !dataLimpeza || dataLimpeza === perfil.data_limpeza}
-                style={{ width: '100%' }}
               >
                 {salvandoData ? 'Salvando...' : 'Atualizar data'}
               </button>
@@ -597,9 +599,9 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
         }}>
           <SectionTitle>COMUNIDADE</SectionTitle>
           <button
-            className="btn-outline"
+            className="btn-primary"
             onClick={compartilhar}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', justifyContent: 'center' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
             <ShareNetwork size={18} weight="bold" />
             Convidar um amigo para o RAD
@@ -613,18 +615,11 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
         }}>
           <SectionTitle>CONTA</SectionTitle>
           <button
+            className="btn-primary"
             onClick={handleLogout}
-            style={{
-              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: '0.5rem', padding: '0.75rem',
-              background: 'transparent',
-              border: '1.5px solid rgba(239,68,68,0.3)',
-              borderRadius: 12, cursor: 'pointer',
-              color: '#ef4444', fontWeight: 700, fontSize: '0.9rem',
-              fontFamily: 'Nunito',
-            }}
+            style={{ background: '#ef4444', borderBottomColor: '#b91c1c' }}
           >
-            <SignOut size={18} weight="bold" />
+            <SignOut size={18} weight="bold" style={{ marginRight: 8 }} />
             Sair da conta
           </button>
         </div>
