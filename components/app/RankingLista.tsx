@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Trophy, Medal, Fire, ArrowsClockwise, SignOut, UserCircle } from '@phosphor-icons/react'
+import { Trophy, Medal, Fire, ArrowsClockwise, SignOut } from '@phosphor-icons/react'
 import { createClient } from '@/lib/supabase/client'
 
 type ItemRanking = {
@@ -14,40 +14,44 @@ type ItemRanking = {
 
 const MEDAL_COLOR: Record<number, string> = {
   1: '#d97706',
-  2: '#94a3b8',
+  2: '#64748b',
   3: '#92400e',
 }
 
-function MedalIcon({ posicao, size = 20 }: { posicao: number; size?: number }) {
+function Posicao({ posicao }: { posicao: number }) {
   if (posicao <= 3) {
-    return <Medal size={size} weight="bold" color={MEDAL_COLOR[posicao]} />
+    return (
+      <div style={{ width: 32, display: 'flex', justifyContent: 'center' }}>
+        <Medal size={22} weight="bold" color={MEDAL_COLOR[posicao]} />
+      </div>
+    )
   }
   return (
-    <span style={{ fontWeight: 900, fontSize: '0.8rem', color: 'var(--text-3)', minWidth: 28, textAlign: 'center' }}>
-      #{posicao}
-    </span>
+    <div style={{ width: 32, display: 'flex', justifyContent: 'center' }}>
+      <span style={{ fontWeight: 900, fontSize: '0.8rem', color: 'var(--text-3)' }}>
+        #{posicao}
+      </span>
+    </div>
   )
 }
 
-function Avatar({
-  nome, size, isUser, posicao,
-}: { nome: string; size: number; isUser: boolean; posicao?: number }) {
+function Avatar({ nome, isUser, posicao }: { nome: string; isUser: boolean; posicao?: number }) {
   const bg = isUser
-    ? 'var(--accent-grad)'
-    : posicao === 1 ? 'linear-gradient(135deg,#d97706,#fbbf24)'
-    : posicao === 2 ? 'linear-gradient(135deg,#64748b,#94a3b8)'
-    : posicao === 3 ? 'linear-gradient(135deg,#78350f,#b45309)'
+    ? 'var(--duo-blue)'
+    : posicao === 1 ? '#d97706'
+    : posicao === 2 ? '#64748b'
+    : posicao === 3 ? '#92400e'
     : 'var(--bg-card-2)'
 
   return (
     <div style={{
-      width: size, height: size, borderRadius: '50%',
+      width: 36, height: 36, borderRadius: '50%',
       background: bg,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: 'Nunito', fontWeight: 900,
-      fontSize: size * 0.4,
+      fontWeight: 900, fontSize: '0.875rem',
       color: isUser || (posicao && posicao <= 3) ? 'white' : 'var(--text-2)',
       flexShrink: 0,
+      border: isUser ? '2px solid var(--duo-blue)' : 'none',
     }}>
       {nome.charAt(0).toUpperCase()}
     </div>
@@ -66,12 +70,6 @@ export default function RankingLista({
   const [confirmSair, setConfirmSair] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const euNoRanking = ranking.find(r => r.usuario_id === usuarioId)
-  const top3 = ranking.slice(0, 3)
-  const podiumOrder = top3.length >= 3
-    ? [top3[1], top3[0], top3[2]]
-    : top3
-
   async function sairDoRanking() {
     setLoading(true)
     const supabase = createClient()
@@ -82,129 +80,108 @@ export default function RankingLista({
     router.refresh()
   }
 
-  const podiumHeight: Record<number, number> = { 1: 140, 2: 110, 3: 90 }
-
   return (
-    <main style={{ padding: '1.5rem 1rem 6rem' }}>
+    <div className="space-y-5">
 
       {/* Header */}
-      <div style={{ marginBottom: '1.25rem' }}>
-        <h1 style={{ fontFamily: 'Nunito', fontWeight: 900, fontSize: '1.75rem', color: 'var(--text-1)', margin: 0 }}>
-          Ranking
-        </h1>
-        <p style={{ color: 'var(--text-2)', margin: '0.25rem 0 0.75rem' }}>
+      <div>
+        <h1 style={{ color: 'var(--text-1)', fontSize: '1.5rem', fontWeight: 900 }}>Ranking</h1>
+        <p style={{ color: 'var(--text-3)', fontSize: '0.8rem', fontWeight: 700, marginTop: 2 }}>
           Semana de {inicioSemana} a {fimSemana}
         </p>
-        <span className="badge badge-blue" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.375rem' }}>
+      </div>
+
+      {/* Badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', gap: 5,
+          background: 'var(--duo-blue-bg)', color: 'var(--duo-blue)',
+          border: '1.5px solid var(--duo-blue)',
+          borderRadius: 99, padding: '4px 10px',
+          fontSize: '0.72rem', fontWeight: 800,
+        }}>
           <ArrowsClockwise size={12} weight="bold" />
           Renova toda segunda-feira
         </span>
       </div>
 
-      {/* Card do usuário logado */}
-      {euNoRanking && (
-        <div className="card" style={{
-          border: '2px solid var(--accent)',
-          background: 'rgba(0,157,255,0.05)',
-          marginBottom: '1.25rem',
+      {/* Card unificado de ranking */}
+      {ranking.length > 0 ? (
+        <div style={{
+          background: 'var(--bg-card)',
+          border: '2.5px solid var(--border)',
+          borderRadius: 20,
+          boxShadow: '0 4px 0 var(--border)',
+          overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <MedalIcon posicao={euNoRanking.posicao} size={24} />
-            <Avatar nome={euNoRanking.nome} size={44} isUser posicao={euNoRanking.posicao} />
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                <span style={{ fontWeight: 800, color: 'var(--text-1)' }}>{euNoRanking.nome}</span>
-                <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase' }}>VOCÊ</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', marginTop: '0.25rem' }}>
-                <Fire size={14} weight="duotone" color="#ff6b35" />
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>{euNoRanking.streak_atual} dias</span>
-              </div>
-            </div>
-            <span style={{ fontWeight: 900, fontSize: '1.1rem', color: 'var(--text-1)' }}>
-              {euNoRanking.pontos_semana} pts
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Pódio */}
-      {top3.length > 0 && (
-        <div className="card" style={{ marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '0.75rem', minHeight: 170 }}>
-            {podiumOrder.map((item) => (
-              <div key={item.usuario_id} style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem',
-                height: podiumHeight[item.posicao] ?? 90,
-                justifyContent: 'flex-end',
-              }}>
-                <Avatar
-                  nome={item.nome}
-                  size={item.posicao === 1 ? 72 : item.posicao === 2 ? 60 : 52}
-                  isUser={item.usuario_id === usuarioId}
-                  posicao={item.posicao}
-                />
-                <Medal size={20} weight="bold" color={MEDAL_COLOR[item.posicao]} />
-                <span style={{ fontWeight: 800, fontSize: '0.75rem', color: 'var(--text-1)', maxWidth: 70, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {item.nome}
-                </span>
-                <span style={{ fontWeight: 900, fontSize: '0.8rem', color: 'var(--text-1)' }}>
+          {ranking.map((item, idx) => {
+            const isUser = item.usuario_id === usuarioId
+            return (
+              <div
+                key={item.usuario_id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.875rem 1.125rem',
+                  borderBottom: idx < ranking.length - 1 ? '1.5px solid var(--border)' : 'none',
+                  background: isUser ? 'rgba(0,157,255,0.05)' : 'transparent',
+                }}
+              >
+                <Posicao posicao={item.posicao} />
+                <Avatar nome={item.nome} isUser={isUser} posicao={item.posicao} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{
+                      fontWeight: 700, fontSize: '0.875rem',
+                      color: 'var(--text-1)',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {item.nome}
+                    </span>
+                    {isUser && (
+                      <span style={{
+                        fontSize: '0.58rem', fontWeight: 800,
+                        color: 'var(--duo-blue)', textTransform: 'uppercase',
+                        background: 'var(--duo-blue-bg)',
+                        borderRadius: 99, padding: '1px 5px',
+                      }}>
+                        você
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                    <Fire size={12} weight="duotone" color="#ff6b35" />
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-3)', fontWeight: 600 }}>
+                      {item.streak_atual} dias
+                    </span>
+                  </div>
+                </div>
+                <span style={{ fontWeight: 900, fontSize: '1rem', color: 'var(--text-1)', whiteSpace: 'nowrap' }}>
                   {item.pontos_semana} pts
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                  <Fire size={12} weight="duotone" color="#ff6b35" />
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-3)' }}>{item.streak_atual}</span>
-                </div>
               </div>
-            ))}
-          </div>
+            )
+          })}
         </div>
-      )}
-
-      {/* Lista completa */}
-      <p style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-3)', marginBottom: '0.75rem' }}>
-        Todos os participantes
-      </p>
-
-      {ranking.map(item => {
-        const isUser = item.usuario_id === usuarioId
-        return (
-          <div key={item.usuario_id} className="card" style={{
-            padding: '0.875rem',
-            borderRadius: 16,
-            marginBottom: '0.5rem',
-            border: isUser ? '2px solid var(--accent)' : undefined,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <MedalIcon posicao={item.posicao} size={18} />
-              <Avatar nome={item.nome} size={32} isUser={isUser} posicao={item.posicao} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', flexWrap: 'wrap' }}>
-                  <span style={{ fontWeight: 700, color: 'var(--text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.nome}</span>
-                  {isUser && <span style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase' }}>você</span>}
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                    <Fire size={12} weight="duotone" color="#ff6b35" />
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>{item.streak_atual}</span>
-                  </span>
-                </div>
-              </div>
-              <span style={{ fontWeight: 900, color: 'var(--text-1)', whiteSpace: 'nowrap' }}>
-                {item.pontos_semana} pts
-              </span>
-            </div>
-          </div>
-        )
-      })}
-
-      {ranking.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--text-3)' }}>
+      ) : (
+        <div style={{
+          background: 'var(--bg-card)',
+          border: '2.5px solid var(--border)',
+          borderRadius: 20,
+          boxShadow: '0 4px 0 var(--border)',
+          padding: '3rem 1rem',
+          textAlign: 'center',
+        }}>
           <Trophy size={40} weight="duotone" color="var(--text-3)" />
-          <p style={{ marginTop: '0.75rem' }}>Nenhum participante ainda.</p>
+          <p style={{ marginTop: '0.75rem', color: 'var(--text-3)', fontWeight: 600 }}>
+            Nenhum participante ainda.
+          </p>
         </div>
       )}
 
       {/* Rodapé */}
-      <p style={{ fontSize: '0.72rem', color: 'var(--text-3)', textAlign: 'center', margin: '1.25rem 0 1rem' }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-3)', textAlign: 'center' }}>
         Apenas nome, pontos e streak são visíveis para outros.
       </p>
 
@@ -239,6 +216,6 @@ export default function RankingLista({
         </div>
       )}
 
-    </main>
+    </div>
   )
 }
