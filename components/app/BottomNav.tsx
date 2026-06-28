@@ -1,14 +1,14 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { House, CalendarCheck, BookOpenText, ClipboardText, ChartBar } from '@phosphor-icons/react'
+import { House, CalendarCheck, BookOpenText, Trophy, ChartBar } from '@phosphor-icons/react'
 
 const items = [
-  { href: '/dashboard',    label: 'Início',    Icon: House          },
-  { href: '/reuniao',      label: 'Reunião',   Icon: CalendarCheck  },
-  { href: '/passos',        label: 'Guia',      Icon: BookOpenText   },
-  { href: '/decimo-passo', label: '10° Passo', Icon: ClipboardText  },
-  { href: '/relatorios',   label: 'Histórico', Icon: ChartBar       },
+  { href: '/dashboard',  label: 'Início',   Icon: House         },
+  { href: '/reuniao',    label: 'Reunião',  Icon: CalendarCheck },
+  { href: '/passos',     label: 'Guia',     Icon: BookOpenText  },
+  { href: '/ranking',    label: 'Ranking',  Icon: Trophy        },
+  { href: '/relatorios', label: 'Histórico', Icon: ChartBar     },
 ]
 
 export default function BottomNav() {
@@ -27,7 +27,7 @@ export default function BottomNav() {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
             <Link key={href} href={href} className={`nav-item ${active ? 'active' : ''}`}>
-              <Icon size={active ? 26 : 22} weight="bold" />
+              <Icon size={active ? 26 : 22} weight={active && href === '/ranking' ? 'duotone' : 'bold'} />
               <span>{label}</span>
             </Link>
           )
