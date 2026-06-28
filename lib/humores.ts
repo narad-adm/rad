@@ -13,7 +13,6 @@ export const HUMORES = [
   { key: 'obsessivo',  label: 'Pensamentos obsessivos',   emoji: '😵‍💫', corFundo: 'rgba(138,129,229,0.15)', corBorda: 'rgba(138,129,229,0.4)', corLabel: '#8a81e5', grupo: 'negativo' },
   // ── NEUTROS ────────────────────────────────────────────
   { key: 'pouca_energia', label: 'Pouca energia',         emoji: '😴', corFundo: 'rgba(100,116,139,0.12)', corBorda: 'rgba(100,116,139,0.3)', corLabel: '#94a3b8', grupo: 'neutro' },
-  { key: 'apatico',    label: 'Apático',                  emoji: '😶', corFundo: 'rgba(100,116,139,0.10)', corBorda: 'rgba(100,116,139,0.25)', corLabel: '#64748b', grupo: 'neutro' },
   { key: 'confuso',    label: 'Confuso',                  emoji: '🤔', corFundo: 'rgba(178,128,230,0.12)', corBorda: 'rgba(178,128,230,0.35)', corLabel: '#b280e6', grupo: 'neutro' },
 ] as const
 

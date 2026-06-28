@@ -9,6 +9,10 @@ interface Props {
   onAbrir: () => void
 }
 
+const COR_PRINCIPAL = '#9055d4'
+const COR_SOMBRA    = '#6b3ea0'
+const COR_BOTAO_BG  = 'rgba(255,255,255,0.22)'
+
 export default function HumorBalloon({ jaRespondeuHoje, humorHoje, onAbrir }: Props) {
   const [dispensado, setDispensado] = useState(false)
 
@@ -42,7 +46,6 @@ export default function HumorBalloon({ jaRespondeuHoje, humorHoje, onAbrir }: Pr
     )
   }
 
-  // Balão de pergunta
   return (
     <div style={{
       position: 'fixed',
@@ -59,79 +62,104 @@ export default function HumorBalloon({ jaRespondeuHoje, humorHoje, onAbrir }: Pr
         }
         @keyframes humorFloat {
           0%, 100% { transform: translateY(0); }
-          50%       { transform: translateY(-6px); }
+          50%       { transform: translateY(-5px); }
         }
       `}</style>
+
+      {/* Botão X */}
+      <button
+        onClick={(e) => { e.stopPropagation(); setDispensado(true) }}
+        style={{
+          position: 'absolute',
+          top: -10,
+          right: -10,
+          width: 24,
+          height: 24,
+          borderRadius: '50%',
+          background: 'var(--bg-card)',
+          border: '1.5px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          color: 'var(--text-3)',
+          padding: 0,
+          zIndex: 2,
+        }}
+      >
+        <X size={11} weight="bold" />
+      </button>
+
+      {/* Card principal */}
+      <div style={{
+        background: COR_PRINCIPAL,
+        borderRadius: 18,
+        boxShadow: `0 5px 0 ${COR_SOMBRA}`,
+        padding: '0.875rem',
+        width: 210,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.75rem',
+      }}>
+        {/* Título */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>🤔</span>
+          <p style={{
+            color: 'white',
+            fontWeight: 900,
+            fontSize: '0.95rem',
+            lineHeight: 1.25,
+          }}>
+            Como você está hoje?
+          </p>
+        </div>
+
+        {/* Botão estilo Duolingo */}
+        <div style={{
+          background: COR_BOTAO_BG,
+          borderRadius: 12,
+          padding: 3,
+        }}>
+          <button
+            onClick={onAbrir}
+            style={{
+              background: 'white',
+              borderRadius: 10,
+              width: '100%',
+              padding: '0.5rem',
+              color: COR_PRINCIPAL,
+              fontWeight: 800,
+              fontSize: '0.8rem',
+              fontFamily: 'Nunito, sans-serif',
+              border: 'none',
+              cursor: 'pointer',
+              letterSpacing: '0.03em',
+            }}
+          >
+            REGISTRAR
+          </button>
+        </div>
+      </div>
 
       {/* Cauda do balão */}
       <div style={{
         position: 'absolute',
-        bottom: -8,
-        right: 18,
-        width: 0,
-        height: 0,
-        borderLeft: '9px solid transparent',
-        borderRight: '9px solid transparent',
-        borderTop: '9px solid var(--duo-blue)',
-        zIndex: 1,
+        bottom: -9,
+        right: 22,
+        width: 0, height: 0,
+        borderLeft: '10px solid transparent',
+        borderRight: '10px solid transparent',
+        borderTop: `9px solid ${COR_SOMBRA}`,
       }} />
       <div style={{
         position: 'absolute',
-        bottom: -5,
-        right: 20,
-        width: 0,
-        height: 0,
-        borderLeft: '7px solid transparent',
-        borderRight: '7px solid transparent',
-        borderTop: '7px solid var(--bg-card)',
-        zIndex: 2,
+        bottom: -4,
+        right: 24,
+        width: 0, height: 0,
+        borderLeft: '8px solid transparent',
+        borderRight: '8px solid transparent',
+        borderTop: `8px solid ${COR_PRINCIPAL}`,
       }} />
-
-      {/* Card */}
-      <button
-        onClick={onAbrir}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          background: 'var(--bg-card)',
-          border: '2px solid var(--duo-blue)',
-          borderRadius: 18,
-          padding: '0.625rem 0.875rem',
-          boxShadow: '0 4px 24px rgba(0,157,255,0.2)',
-          cursor: 'pointer',
-          paddingRight: '2.25rem',
-          position: 'relative',
-        }}
-      >
-        <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>🤔</span>
-        <span style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--text-1)', whiteSpace: 'nowrap' }}>
-          Como você está hoje?
-        </span>
-
-        {/* Botão X */}
-        <button
-          onClick={(e) => { e.stopPropagation(); setDispensado(true) }}
-          style={{
-            position: 'absolute',
-            top: -10,
-            right: -10,
-            width: 24,
-            height: 24,
-            borderRadius: '50%',
-            background: 'var(--bg-card-2)',
-            border: '1.5px solid var(--border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: 'var(--text-3)',
-            padding: 0,
-          }}
-        >
-          <X size={11} weight="bold" />
-        </button>
-      </button>
     </div>
   )
 }
