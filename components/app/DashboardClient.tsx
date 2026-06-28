@@ -60,7 +60,7 @@ export default function DashboardClient({
     if (i > todayMon) return 'future'
     if (i === todayMon) return pontuacaoHoje > 0 ? 'today-done' : 'today-empty'
     const daysBack = todayMon - i
-    return daysBack < streak ? 'done' : 'past-empty'
+    return daysBack <= streak ? 'done' : 'past-empty'
   }
 
   async function salvarHumor(humor: HumorKey) {
@@ -151,12 +151,6 @@ export default function DashboardClient({
               </span>
             </div>
           </div>
-          {streak > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--duo-orange)', fontWeight: 800, fontSize: '0.85rem', flexShrink: 0 }}>
-              <Fire size={16} weight="fill" />
-              {streak}
-            </div>
-          )}
         </div>
 
         {/* Linha 2: Esta semana */}
@@ -164,9 +158,17 @@ export default function DashboardClient({
           padding: '0.875rem 1.125rem',
           borderBottom: '2px solid var(--border)',
         }}>
-          <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.625rem' }}>
-            ESTA SEMANA
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+            <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em' }}>
+              ESTA SEMANA
+            </p>
+            {streak > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'var(--duo-orange)', fontWeight: 800, fontSize: '0.72rem' }}>
+                <Fire size={13} weight="fill" />
+                {streak} dia{streak !== 1 ? 's' : ''} seguido{streak !== 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             {DIAS_SEMANA_SHORT.map((label, i) => {
               const type = getDayType(i)
