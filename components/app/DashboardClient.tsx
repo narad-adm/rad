@@ -2,14 +2,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import {
-  Fire, HandWaving, Heart,
+  Fire, HandWaving,
   CalendarCheck, BookOpenText, ClipboardText, ChatCircleText,
-  SignOut, CaretRight, Leaf, LightningA,
+  CaretRight, Leaf, LightningA, UserCircle,
 } from '@phosphor-icons/react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
 import ThemeToggle from '@/components/app/ThemeToggle'
-import NotificacoesToggle from '@/components/app/NotificacoesToggle'
 import HumorBalloon from '@/components/app/HumorBalloon'
 import ModalHumor from '@/components/app/ModalHumor'
 import type { HumorKey } from '@/lib/humores'
@@ -38,6 +38,7 @@ export default function DashboardClient({
   nivel, streak, streakMax, reunioesHoje, leuHoje, inventarioHoje,
   jaRespondeuHoje: jaRespondeuInicial, humorHoje: humorInicial, userId,
 }: Props) {
+  const router = useRouter()
   const supabase = createClient()
   const [modalHumorAberto, setModalHumorAberto] = useState(false)
   const [jaRespondeuHoje, setJaRespondeuHoje] = useState(jaRespondeuInicial)
@@ -73,11 +74,6 @@ export default function DashboardClient({
     setModalHumorAberto(false)
   }
 
-  async function handleLogout() {
-    await supabase.auth.signOut()
-    window.location.href = '/login'
-  }
-
   const saudacao = () => {
     const h = agora.getHours()
     if (h < 12) return 'Bom dia'
@@ -103,9 +99,18 @@ export default function DashboardClient({
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <NotificacoesToggle />
-          <button onClick={handleLogout} className="theme-toggle" aria-label="Sair">
-            <SignOut size={18} weight="bold" />
+          <button
+            onClick={() => router.push('/perfil')}
+            aria-label="Meu perfil"
+            style={{
+              width: 36, height: 36, borderRadius: 12,
+              background: 'var(--bg-card-2)',
+              border: '1.5px solid var(--border)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: 'var(--text-2)',
+            }}
+          >
+            <UserCircle size={22} weight="bold" />
           </button>
         </div>
       </div>

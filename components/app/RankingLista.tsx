@@ -1,8 +1,5 @@
 'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Trophy, Medal, Fire, ArrowsClockwise, SignOut } from '@phosphor-icons/react'
-import { createClient } from '@/lib/supabase/client'
+import { Trophy, Medal, Fire, ArrowsClockwise } from '@phosphor-icons/react'
 
 type ItemRanking = {
   posicao: number
@@ -66,19 +63,6 @@ export default function RankingLista({
   inicioSemana: string
   fimSemana: string
 }) {
-  const router = useRouter()
-  const [confirmSair, setConfirmSair] = useState(false)
-  const [loading, setLoading] = useState(false)
-
-  async function sairDoRanking() {
-    setLoading(true)
-    const supabase = createClient()
-    await supabase
-      .from('perfis')
-      .update({ ranking_opt_in: false, ranking_opt_in_em: new Date().toISOString() })
-      .eq('id', usuarioId)
-    router.refresh()
-  }
 
   return (
     <div className="space-y-5">
@@ -180,41 +164,6 @@ export default function RankingLista({
         </div>
       )}
 
-      {/* Rodapé */}
-      <p style={{ fontSize: '0.72rem', color: 'var(--text-3)', textAlign: 'center' }}>
-        Apenas nome, pontos e streak são visíveis para outros.
-      </p>
-
-      {/* Sair do ranking */}
-      {!confirmSair ? (
-        <button
-          className="btn-ghost"
-          onClick={() => setConfirmSair(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 auto' }}
-        >
-          <SignOut size={16} weight="bold" />
-          Sair do ranking
-        </button>
-      ) : (
-        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-          <button
-            className="btn-outline"
-            onClick={sairDoRanking}
-            disabled={loading}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.875rem' }}
-          >
-            <SignOut size={14} weight="bold" />
-            {loading ? 'Saindo...' : 'Confirmar'}
-          </button>
-          <button
-            className="btn-ghost"
-            onClick={() => setConfirmSair(false)}
-            style={{ fontSize: '0.875rem' }}
-          >
-            Cancelar
-          </button>
-        </div>
-      )}
 
     </div>
   )
