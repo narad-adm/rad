@@ -123,7 +123,7 @@ export default function DecimoPasso() {
               className="input-field"
               rows={3}
               placeholder="Escreva aqui sua reflexão..."
-              value={respostas[key]}
+              value={respostas[key as keyof typeof respostas]}
               onChange={e => setRespostas(prev => ({ ...prev, [key]: e.target.value }))}
               disabled={jaFez}
               style={{ resize: 'none', opacity: jaFez ? 0.7 : 1 }}
