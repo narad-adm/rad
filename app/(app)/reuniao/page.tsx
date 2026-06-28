@@ -116,7 +116,13 @@ export default function ReuniaoPage() {
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-2)' }}>{tipoSelecionado?.nome}</p>
         </div>
-        <div className="card pop-in text-center" style={{ padding: '2rem 3rem' }}>
+        <div className="pop-in text-center" style={{
+          padding: '2rem 3rem',
+          background: 'var(--bg-card)',
+          border: '2.5px solid var(--border)',
+          borderRadius: 20,
+          boxShadow: '0 4px 0 var(--border)',
+        }}>
           <div style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1, color: 'var(--duo-blue)' }}>
             +{pontosGanhos}
           </div>
@@ -151,7 +157,14 @@ export default function ReuniaoPage() {
           </p>
         </div>
 
-        <div className="card space-y-6">
+        <div style={{
+          background: 'var(--bg-card)',
+          border: '2.5px solid var(--border)',
+          borderRadius: 20,
+          boxShadow: '0 4px 0 var(--border)',
+          padding: '1.25rem',
+          display: 'flex', flexDirection: 'column', gap: '1.5rem',
+        }}>
           <div>
             <label className="label" style={{ marginBottom: '0.75rem', display: 'block' }}>
               O quanto você queria estar lá?
@@ -176,7 +189,13 @@ export default function ReuniaoPage() {
           </div>
         </div>
 
-        <div className="card">
+        <div style={{
+          background: 'var(--bg-card)',
+          border: '2.5px solid var(--border)',
+          borderRadius: 20,
+          boxShadow: '0 4px 0 var(--border)',
+          padding: '1.25rem',
+        }}>
           <label className="label">Observações (opcional)</label>
           <textarea
             className="input-field"
@@ -187,6 +206,7 @@ export default function ReuniaoPage() {
             style={{ resize: 'none', marginTop: '0.25rem' }}
           />
         </div>
+
 
         <div style={{ paddingBottom: 8 }}>
           <button onClick={handleRegistrar} disabled={loading} className="btn-primary">
@@ -209,34 +229,45 @@ export default function ReuniaoPage() {
         </p>
       </div>
 
-      <div className="space-y-3">
-        {tipos.map(tipo => {
+      <div style={{
+        background: 'var(--bg-card)',
+        border: '2.5px solid var(--border)',
+        borderRadius: 20,
+        boxShadow: '0 4px 0 var(--border)',
+        overflow: 'hidden',
+      }}>
+        {tipos.map((tipo, idx) => {
           const Icon = ICONES[tipo.icone] || Circle
           const selecionado = tipoSelecionado?.id === tipo.id
           return (
             <button key={tipo.id}
               onClick={() => setTipoSelecionado(tipo)}
-              className="w-full flex items-center gap-4 p-4 rounded-2xl text-left transition-all"
+              className="w-full flex items-center gap-4 text-left"
               style={{
-                background: selecionado ? 'rgba(0,157,255,0.08)' : 'var(--bg-card)',
-                border: `2px solid ${selecionado ? 'var(--accent)' : 'var(--border)'}`,
+                padding: '0.875rem 1.125rem',
+                borderBottom: idx < tipos.length - 1 ? '1.5px solid var(--border)' : 'none',
+                background: selecionado ? 'rgba(0,157,255,0.07)' : 'transparent',
                 cursor: 'pointer',
               }}>
               <div style={{
-                width: 44, height: 44, borderRadius: 14,
+                width: 40, height: 40, borderRadius: 12,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 background: selecionado ? 'rgba(0,157,255,0.15)' : 'var(--bg-card-2)',
-                color: selecionado ? 'var(--accent)' : 'var(--text-3)',
+                color: selecionado ? 'var(--duo-blue)' : 'var(--text-3)',
               }}>
                 <Icon size={20} weight="bold" />
               </div>
               <div style={{ flex: 1, fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-1)' }}>
                 {tipo.nome}
               </div>
-              <div>
-                <span className="badge badge-blue">+{tipo.pontos}</span>
-              </div>
-              {selecionado && <CheckCircle size={18} weight="bold" color="#009dff" />}
+              <span style={{
+                display: 'inline-flex', alignItems: 'center',
+                background: 'var(--duo-blue-bg)', color: 'var(--duo-blue)',
+                border: '1.5px solid var(--duo-blue)',
+                borderRadius: 99, padding: '2px 9px',
+                fontSize: '0.72rem', fontWeight: 800,
+              }}>+{tipo.pontos}</span>
+              {selecionado && <CheckCircle size={18} weight="bold" color="var(--duo-blue)" />}
             </button>
           )
         })}

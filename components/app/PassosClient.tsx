@@ -77,7 +77,14 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
       </div>
 
       {/* Stats */}
-      <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-around',
+        background: 'var(--bg-card)',
+        border: '2.5px solid var(--border)',
+        borderRadius: 20,
+        boxShadow: '0 4px 0 var(--border)',
+        padding: '1rem',
+      }}>
         <div className="text-center">
           <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text-1)' }}>{totalRespostas}</div>
           <div style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 700 }}>respostas</div>
@@ -117,7 +124,13 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
           const completo = respondidas === perguntasDoPasso.length
 
           return (
-            <div key={passo} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div key={passo} style={{
+              padding: 0, overflow: 'hidden',
+              background: 'var(--bg-card)',
+              border: '2.5px solid var(--border)',
+              borderRadius: 20,
+              boxShadow: '0 4px 0 var(--border)',
+            }}>
               <button
                 onClick={() => setPassoAtivo(aberto ? null : passo)}
                 className="w-full flex items-center justify-between text-left"
