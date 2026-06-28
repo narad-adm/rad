@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
         sent++
       } catch (err: unknown) {
         const status = (err as { statusCode?: number }).statusCode
+        console.error('push error:', status, JSON.stringify(err))
         if (status === 410 || status === 404) stale.push(sub.endpoint)
       }
     })
