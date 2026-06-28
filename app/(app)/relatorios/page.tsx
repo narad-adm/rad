@@ -28,12 +28,12 @@ export default async function RelatoriosPage() {
       .eq('usuario_id', user.id),
     supabase.from('inventarios_diarios').select('data')
       .eq('usuario_id', user.id).order('data', { ascending: false }).limit(30),
-    supabase.from('inventarios_diarios').select('data')
-      .eq('usuario_id', user.id).gte('data', inicioMes).lte('data', fimMes),
     supabase.from('humores_diarios').select('data, humor')
       .eq('usuario_id', user.id)
       .gte('data', inicioMes)
       .lte('data', fimMes),
+    supabase.from('inventarios_diarios').select('data')
+      .eq('usuario_id', user.id).gte('data', inicioMes).lte('data', fimMes),
   ])
 
   const diasLimpo = perfil.data ? calcularDiasLimpo(perfil.data.data_limpeza) : 0
