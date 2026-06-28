@@ -31,7 +31,7 @@ const PERGUNTA_COLORS: Record<string, string> = {
 export default function DecimoPasso() {
   const router = useRouter()
   const [jaFez, setJaFez] = useState(false)
-  const [respostas, setRespostas] = useState<Record<string, string>>({
+  const [respostas, setRespostas] = useState({
     honestidade: '', admissoes: '', contribuicoes: '', doenca: '', acoes_limpeza: ''
   })
   const [loading, setLoading] = useState(true)
