@@ -251,6 +251,7 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
   const [notifBloqueada, setNotifBloqueada] = useState(false)
   const [notifSuportada, setNotifSuportada] = useState(true)
   const [notifLoading, setNotifLoading] = useState(false)
+  const [notifPrecisaInstalar, setNotifPrecisaInstalar] = useState(false)
 
   const [rankingOn, setRankingOn] = useState(perfil.ranking_opt_in === true)
   const [modalRanking, setModalRanking] = useState(false)
@@ -260,6 +261,13 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       setNotifSuportada(false); return
+    }
+    // iOS só suporta push em modo standalone (instalado na tela de início)
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || (window.navigator as { standalone?: boolean }).standalone === true
+    if (isIOS && !isStandalone) {
+      setNotifPrecisaInstalar(true); return
     }
     if (Notification.permission === 'denied') {
       setNotifBloqueada(true); return
@@ -572,10 +580,14 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
                   Notificações
                 </p>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-3)', fontWeight: 600, marginTop: 1 }}>
-                  {notifBloqueada ? 'Bloqueadas no navegador' : 'Permitir notificações do app'}
+                  {notifBloqueada
+                    ? 'Bloqueadas no navegador'
+                    : notifPrecisaInstalar
+                    ? 'Adicione o app à tela de início primeiro'
+                    : 'Permitir notificações do app'}
                 </p>
               </div>
-              <Switch on={notifOn} onToggle={toggleNotificacao} disabled={notifBloqueada || notifLoading} />
+              <Switch on={notifOn} onToggle={toggleNotificacao} disabled={notifBloqueada || notifLoading || notifPrecisaInstalar} />
             </div>
           )}
 
