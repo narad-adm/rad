@@ -99,18 +99,8 @@ export default function DashboardClient({
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <button
-            onClick={() => router.push('/perfil')}
-            aria-label="Meu perfil"
-            style={{
-              width: 36, height: 36, borderRadius: 12,
-              background: 'var(--bg-card-2)',
-              border: '1.5px solid var(--border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', color: 'var(--text-2)',
-            }}
-          >
-            <UserCircle size={22} weight="bold" />
+          <button onClick={() => router.push('/perfil')} className="theme-toggle" aria-label="Meu perfil">
+            <UserCircle size={20} weight="bold" />
           </button>
         </div>
       </div>
