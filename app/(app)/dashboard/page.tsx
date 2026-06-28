@@ -1,11 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { calcularDiasLimpo, getNivelRecuperacao, PONTOS } from '@/lib/types'
+import { hojeEmBRT } from '@/lib/utils'
 import DashboardClient from '@/components/app/DashboardClient'
 
 async function getDadosDashboard(userId: string) {
   const supabase = await createClient()
-  const hoje = new Date().toISOString().split('T')[0]
+  const hoje = hojeEmBRT()
 
   const [perfil, pontuacao, streak, checkins, leitura, inventario, humor] = await Promise.all([
     supabase.from('perfis').select('*').eq('id', userId).single(),

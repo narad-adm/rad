@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, CheckCircle } from '@phosphor-icons/react'
 import { createClient } from '@/lib/supabase/client'
+import { hojeEmBRT } from '@/lib/utils'
 import { inserirRespostaPasso, atualizarRespostaPasso } from '@/app/actions/respostas'
 import type { PassoPergunta } from '@/lib/types'
 
@@ -50,7 +51,7 @@ export default function ModoFocoClient({
 
   // ── Auto-save ──────────────────────────────────────────
   const atualizarPontuacao = useCallback(async () => {
-    const hoje = new Date().toISOString().split('T')[0]
+    const hoje = hojeEmBRT()
     const { data } = await supabase.from('pontuacao_diaria')
       .select('*').eq('usuario_id', userId).eq('data', hoje).single()
     if (data) {

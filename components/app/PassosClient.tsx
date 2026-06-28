@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { hojeEmBRT } from '@/lib/utils'
 import { ChatCircleText, CaretDown, CaretUp, PaperPlaneTilt, CheckCircle, Sparkle } from '@phosphor-icons/react'
 import type { PassoPergunta, RespostaPasso } from '@/lib/types'
 
@@ -37,7 +38,7 @@ export default function PassosClient({ perguntas, respostas: respostasIniciais, 
       setRespostas(prev => [data, ...prev])
       setTextosResposta(prev => ({ ...prev, [perguntaId]: '' }))
 
-      const hoje = new Date().toISOString().split('T')[0]
+      const hoje = hojeEmBRT()
       const { data: pont } = await supabase.from('pontuacao_diaria')
         .select('*').eq('usuario_id', userId).eq('data', hoje).single()
 

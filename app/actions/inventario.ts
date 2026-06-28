@@ -1,6 +1,7 @@
 'use server'
 import { createClient } from '@/lib/supabase/server'
 import { encrypt, decrypt } from '@/lib/crypto'
+import { hojeEmBRT } from '@/lib/utils'
 
 type CamposInventario = {
   honestidade: string
@@ -15,7 +16,7 @@ export async function buscarInventarioHoje(): Promise<(CamposInventario & { id: 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
 
-  const hoje = new Date().toISOString().split('T')[0]
+  const hoje = hojeEmBRT()
   const { data } = await supabase
     .from('inventarios_diarios')
     .select('id, honestidade, admissoes, contribuicoes, doenca, acoes_limpeza')
@@ -88,7 +89,7 @@ export async function salvarInventario(respostas: CamposInventario): Promise<voi
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Não autenticado')
 
-  const hoje = new Date().toISOString().split('T')[0]
+  const hoje = hojeEmBRT()
   const { error } = await supabase.from('inventarios_diarios').insert({
     usuario_id: user.id,
     data: hoje,

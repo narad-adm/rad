@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { hojeEmBRT } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import {
   CheckCircle, UsersFour, Rows, BookOpenText, CalendarDots, Books, Star, Circle, Confetti, Fire, Handshake,
@@ -41,7 +42,7 @@ export default function ReuniaoPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/login'); return }
 
-    const hoje = new Date().toISOString().split('T')[0]
+    const hoje = hojeEmBRT()
     const hora = new Date().toTimeString().slice(0, 5)
     const bonus = notaQuerer < 5 ? 20 : 0
     const pontos = tipoSelecionado.pontos + bonus

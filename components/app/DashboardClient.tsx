@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { hojeEmBRT } from '@/lib/utils'
 import {
   Fire, HandWaving,
   CalendarCheck, BookOpenText, ClipboardText, ChatCircleText,
@@ -68,7 +69,7 @@ export default function DashboardClient({
   }
 
   async function salvarHumor(humor: HumorKey) {
-    const hoje = new Date().toISOString().split('T')[0]
+    const hoje = hojeEmBRT()
     await supabase.from('humores_diarios').upsert(
       { usuario_id: userId, data: hoje, humor },
       { onConflict: 'usuario_id,data' }

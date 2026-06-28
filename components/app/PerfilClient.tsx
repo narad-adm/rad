@@ -267,6 +267,14 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription()
       setNotifOn(!!sub)
+      // Subscription lost by browser (iOS clears it) — clean up stale DB record
+      if (!sub && temNotificacao) {
+        fetch('/api/notificacoes/cancelar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        }).catch(() => {})
+      }
     }).catch(() => setNotifSuportada(false))
   }, [])
 

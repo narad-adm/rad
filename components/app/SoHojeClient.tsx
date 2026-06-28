@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { hojeEmBRT } from '@/lib/utils'
 import { BookOpenText, CheckCircle, SunHorizon } from '@phosphor-icons/react'
 import type { SoPorHoje } from '@/lib/types'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
@@ -27,7 +28,7 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
     if (jaLeu || !texto) return
     setLoading(true)
 
-    const hojeStr = new Date().toISOString().split('T')[0]
+    const hojeStr = hojeEmBRT()
 
     await supabase.from('leituras_spj').insert({
       usuario_id: userId,

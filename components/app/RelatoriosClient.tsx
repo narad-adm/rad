@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Fire, Trophy, UsersFour, BookOpenText, ClipboardText, ChatCircleText, ChartBar, CaretLeft, CaretRight, X, MagnifyingGlass, HandsPraying, Heart, Warning, Sparkle } from '@phosphor-icons/react'
 import { getHumor } from '@/lib/humores'
+import { hojeEmBRT } from '@/lib/utils'
 import { buscarDadosCalendario, buscarInventarioPorData } from '@/app/actions/inventario'
 
 const MESES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
@@ -54,7 +55,7 @@ export default function RelatoriosClient({
     }
   })
 
-  const hoje = new Date().toISOString().split('T')[0]
+  const hoje = hojeEmBRT()
   const maxVal = Math.max(...ultimos7.map(d => d.pontos), 100)
 
   // ── Calendário state ───────────────────────────────

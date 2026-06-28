@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { hojeEmBRT } from '@/lib/utils'
 import Link from 'next/link'
 import { Eye, EyeSlash, ArrowLeft } from '@phosphor-icons/react'
 
@@ -57,7 +58,7 @@ export default function CadastroPage() {
     }
   }
 
-  const hoje = new Date().toISOString().split('T')[0]
+  const hoje = hojeEmBRT()
 
   return (
     <div style={{
