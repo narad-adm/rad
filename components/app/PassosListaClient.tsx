@@ -45,7 +45,13 @@ export default function PassosListaClient({
       </div>
 
       {/* Stats row */}
-      <div className="card" style={{ display: 'flex', padding: '1rem 0' }}>
+      <div style={{
+        display: 'flex', padding: '1rem 0',
+        background: 'var(--bg-card)',
+        border: '2.5px solid var(--border)',
+        borderRadius: 20,
+        boxShadow: '0 4px 0 var(--border)',
+      }}>
         {[
           { valor: totalRespondidas, label: 'respondidas' },
           { valor: totalPontosGanhos, label: 'pontos ganhos' },
@@ -72,10 +78,10 @@ export default function PassosListaClient({
               style={{
                 width: '100%', textAlign: 'left', cursor: 'pointer',
                 background: 'var(--bg-card)',
-                border: `2px solid ${concluido ? 'var(--duo-green)' : iniciado ? 'var(--duo-blue)' : 'var(--border)'}`,
-                borderRadius: 16, padding: '1rem',
+                border: `2.5px solid ${concluido ? 'var(--duo-green)' : iniciado ? 'var(--duo-blue)' : 'var(--border)'}`,
+                borderRadius: 20, padding: '1rem',
                 display: 'flex', alignItems: 'center', gap: '0.875rem',
-                transition: 'border-color 0.2s',
+                boxShadow: `0 4px 0 ${concluido ? 'var(--duo-green-dark)' : iniciado ? '#0a6fa8' : 'var(--border)'}`,
               }}
             >
               {/* Número */}
