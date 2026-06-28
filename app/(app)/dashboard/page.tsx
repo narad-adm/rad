@@ -19,6 +19,7 @@ async function getDadosDashboard(userId: string) {
 
   return {
     perfil: perfil.data,
+    onboardingConcluido: perfil.data?.onboarding_concluido ?? true,
     pontuacaoHoje: pontuacao.data?.pontos_total ?? 0,
     streak: streak.data?.streak_atual ?? 0,
     streakMax: streak.data?.streak_maximo ?? 0,
@@ -58,6 +59,7 @@ export default async function DashboardPage() {
       jaRespondeuHoje={dados.jaRespondeuHoje}
       humorHoje={dados.humorHoje}
       userId={user.id}
+      onboardingConcluido={dados.onboardingConcluido}
     />
   )
 }

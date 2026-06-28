@@ -12,6 +12,7 @@ import { MESES, DIAS_SEMANA } from '@/lib/types'
 import ThemeToggle from '@/components/app/ThemeToggle'
 import HumorBalloon from '@/components/app/HumorBalloon'
 import ModalHumor from '@/components/app/ModalHumor'
+import Onboarding from '@/components/app/Onboarding'
 import type { HumorKey } from '@/lib/humores'
 
 interface Props {
@@ -29,6 +30,7 @@ interface Props {
   jaRespondeuHoje: boolean
   humorHoje: string | null
   userId: string
+  onboardingConcluido: boolean
 }
 
 const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
@@ -37,12 +39,14 @@ export default function DashboardClient({
   nome, diasLimpo, pontuacaoHoje, porcentagem,
   nivel, streak, streakMax, reunioesHoje, leuHoje, inventarioHoje,
   jaRespondeuHoje: jaRespondeuInicial, humorHoje: humorInicial, userId,
+  onboardingConcluido,
 }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [modalHumorAberto, setModalHumorAberto] = useState(false)
   const [jaRespondeuHoje, setJaRespondeuHoje] = useState(jaRespondeuInicial)
   const [humorHoje, setHumorHoje] = useState<string | null>(humorInicial)
+  const [mostrarOnboarding, setMostrarOnboarding] = useState(!onboardingConcluido)
 
   const agora = new Date()
   const diaSemana = DIAS_SEMANA[agora.getDay()]
@@ -84,6 +88,8 @@ export default function DashboardClient({
   const doneCount = [reunioesHoje > 0, leuHoje, inventarioHoje].filter(Boolean).length
 
   return (
+    <>
+      {mostrarOnboarding && <Onboarding onConcluir={() => setMostrarOnboarding(false)} />}
     <div className="space-y-5">
 
       {/* ── Header ─────────────────────────────────────── */}
@@ -290,6 +296,7 @@ export default function DashboardClient({
         onSalvar={salvarHumor}
       />
     </div>
+    </>
   )
 }
 

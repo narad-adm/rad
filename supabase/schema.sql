@@ -19,12 +19,13 @@ CREATE TYPE tipo_reuniao_rad AS ENUM (
 -- ============================================================
 
 CREATE TABLE perfis (
-  id               UUID PRIMARY KEY REFERENCES auth.users(id)
-                   ON DELETE CASCADE,
-  nome             VARCHAR(100) NOT NULL,
-  data_limpeza     DATE NOT NULL,
-  criado_em        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  atualizado_em    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id                    UUID PRIMARY KEY REFERENCES auth.users(id)
+                        ON DELETE CASCADE,
+  nome                  VARCHAR(100) NOT NULL,
+  data_limpeza          DATE NOT NULL,
+  onboarding_concluido  BOOLEAN NOT NULL DEFAULT FALSE,
+  criado_em             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  atualizado_em         TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- ============================================================
