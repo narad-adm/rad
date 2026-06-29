@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, CheckCircle } from '@phosphor-icons/react'
+import { ArrowLeft, CheckCircle, Microphone, Stop, CircleNotch } from '@phosphor-icons/react'
 import { createClient } from '@/lib/supabase/client'
 import { hojeEmBRT } from '@/lib/utils'
 import { inserirRespostaPasso, atualizarRespostaPasso } from '@/app/actions/respostas'
@@ -44,6 +44,11 @@ export default function ModoFocoClient({
   const [ultimoSalvo, setUltimoSalvo] = useState<Date | null>(null)
   const [mostrarSalvo, setMostrarSalvo] = useState(false)
   const [fadeKey, setFadeKey] = useState(0)
+
+  type MicState = 'idle' | 'recording' | 'transcribing'
+  const [micState, setMicState] = useState<MicState>('idle')
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
 
   const pergunta = perguntas[perguntaAtual]
   const respondidosNoTopico = perguntas.filter(p => respostasMap[p.id]).length
@@ -133,6 +138,40 @@ export default function ModoFocoClient({
     if (timerRef.current) clearTimeout(timerRef.current)
     await salvarRascunho(pergunta.id, rascunho)
     router.push(`/passos/${passo}`)
+  }
+
+  async function handleMic() {
+    if (micState === 'idle') {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        const mr = new MediaRecorder(stream)
+        chunksRef.current = []
+        mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
+        mr.onstop = async () => {
+          stream.getTracks().forEach(t => t.stop())
+          setMicState('transcribing')
+          const blob = new Blob(chunksRef.current, { type: mr.mimeType })
+          const form = new FormData()
+          form.append('audio', blob, 'audio')
+          try {
+            const res = await fetch('/api/transcrever', { method: 'POST', body: form })
+            const json = await res.json()
+            if (json.texto) {
+              setRascunho(prev => prev ? `${prev} ${json.texto}` : json.texto)
+            }
+          } finally {
+            setMicState('idle')
+          }
+        }
+        mr.start()
+        mediaRecorderRef.current = mr
+        setMicState('recording')
+      } catch {
+        setMicState('idle')
+      }
+    } else if (micState === 'recording') {
+      mediaRecorderRef.current?.stop()
+    }
   }
 
   const ehUltima = perguntaAtual === perguntas.length - 1
@@ -245,6 +284,29 @@ export default function ModoFocoClient({
             onFocus={e => { e.currentTarget.style.borderColor = 'var(--duo-blue)' }}
             onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)' }}
           />
+
+          {/* Mic button */}
+          <button
+            onClick={handleMic}
+            disabled={micState === 'transcribing'}
+            title={micState === 'recording' ? 'Parar gravação' : 'Falar resposta'}
+            style={{
+              position: 'absolute', bottom: 10, left: 10,
+              width: 36, height: 36, borderRadius: '50%',
+              border: 'none', cursor: micState === 'transcribing' ? 'default' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: micState === 'recording' ? '#ef4444' : 'var(--duo-blue)',
+              color: 'white',
+              boxShadow: micState === 'recording' ? '0 0 0 4px rgba(239,68,68,0.25)' : 'none',
+              transition: 'background 0.2s, box-shadow 0.2s',
+              animation: micState === 'recording' ? 'pulse 1.2s ease-in-out infinite' : 'none',
+            }}
+          >
+            <style>{`@keyframes pulse { 0%,100% { box-shadow: 0 0 0 4px rgba(239,68,68,0.25); } 50% { box-shadow: 0 0 0 8px rgba(239,68,68,0.1); } }`}</style>
+            {micState === 'idle' && <Microphone size={17} weight="bold" />}
+            {micState === 'recording' && <Stop size={15} weight="bold" />}
+            {micState === 'transcribing' && <CircleNotch size={17} weight="bold" style={{ animation: 'spin 0.8s linear infinite' }} />}
+          </button>
 
           {/* Auto-save indicator */}
           <div style={{
