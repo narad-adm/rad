@@ -154,31 +154,11 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
 
         {/* ── Header ──────────────────────────────────── */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: '0.375rem' }}>
-              <BookOpenText size={16} weight="duotone" color="var(--duo-blue)" />
-              <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--text-3)' }}>
-                SÓ POR HOJE
-              </span>
-            </div>
-            {texto && (
-              <button
-                onClick={handleCompartilhar}
-                title="Compartilhar meditação"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0.25rem',
-                  borderRadius: 8,
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: 'var(--text-3)',
-                }}
-              >
-                <ShareNetwork size={20} weight="regular" />
-              </button>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: '0.375rem' }}>
+            <BookOpenText size={16} weight="duotone" color="var(--duo-blue)" />
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--text-3)' }}>
+              SÓ POR HOJE
+            </span>
           </div>
           <p style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-2)', marginBottom: '0.5rem' }}>
             {diaSemana}, {dia} de {nomeMes}
@@ -274,22 +254,32 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
             {/* ── Botão / conclusão ───────────────────── */}
             <div style={{ marginTop: '0.5rem' }}>
               {jaLeu ? (
-                <div style={{
-                  background: 'rgba(34,197,94,0.1)',
-                  border: '2px solid rgba(34,197,94,0.3)',
-                  borderRadius: 16,
-                  padding: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  animation: 'popIn 0.3s ease',
-                }}>
-                  <style>{`@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }`}</style>
-                  <CheckCircle size={24} weight="bold" color="#22c55e" />
-                  <span style={{ fontWeight: 800, color: '#22c55e' }}>
-                    Leitura de hoje concluída! 💙
-                  </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{
+                    background: 'rgba(34,197,94,0.1)',
+                    border: '2px solid rgba(34,197,94,0.3)',
+                    borderRadius: 16,
+                    padding: '1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    animation: 'popIn 0.3s ease',
+                  }}>
+                    <style>{`@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }`}</style>
+                    <CheckCircle size={24} weight="bold" color="#22c55e" />
+                    <span style={{ fontWeight: 800, color: '#22c55e' }}>
+                      Leitura de hoje concluída! 💙
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleCompartilhar}
+                    className="btn-primary"
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                  >
+                    <ShareNetwork size={20} weight="bold" />
+                    Compartilhar meditação
+                  </button>
                 </div>
               ) : (
                 <button
