@@ -55,7 +55,7 @@ const SLIDES: Slide[] = [
     Icon: Rocket,
     cor: 'var(--duo-orange)',
     titulo: 'Pronto para começar?',
-    texto: 'Explore no seu ritmo. Quanto mais você pratica, mais forte fica sua recuperação. Só por hoje — um dia de cada vez.',
+    texto: 'Explore no seu ritmo. Quanto mais você pratica, mais forte fica sua recuperação. Só por hoje — um dia de cada vez.\n\nDica: ative as notificações no seu Perfil para receber lembretes diários.',
   },
 ]
 
@@ -206,7 +206,7 @@ export default function Onboarding({ onConcluir }: Props) {
               </h2>
               <p style={{
                 fontSize: '0.925rem', color: 'var(--text-2)',
-                lineHeight: 1.7, fontWeight: 500,
+                lineHeight: 1.7, fontWeight: 500, whiteSpace: 'pre-line',
               }}>
                 {atual.texto}
               </p>
