@@ -4,12 +4,12 @@ import { createClient } from '@/lib/supabase/client'
 import { hojeEmBRT } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import {
-  CheckCircle, UsersFour, Rows, BookOpenText, CalendarDots, Books, Star, Circle, Confetti, Fire, Handshake,
+  CheckCircle, UsersFour, Rows, BookOpenText, CalendarDots, Books, Star, Circle, Confetti, Handshake, type Icon,
 } from '@phosphor-icons/react'
 import type { TipoReuniao } from '@/lib/types'
 import { atualizarStreak } from '@/app/actions/streak'
 
-const ICONES: Record<string, React.ComponentType<any>> = {
+const ICONES: Record<string, Icon> = {
   Users: UsersFour,
   Layers: Rows,
   BookOpen: BookOpenText,

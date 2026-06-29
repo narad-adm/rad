@@ -20,12 +20,25 @@ interface InventarioAberto {
   respostas: Record<string, string>
 }
 
+interface PontuacaoDia {
+  data: string
+  pontos_total: number
+}
+
+interface CheckinReuniao {
+  id: string
+  data: string
+  nota_beneficio?: number | null
+  pontos_ganhos: number
+  tipos_reuniao?: { nome: string } | null
+}
+
 interface Props {
   diasLimpo: number
   streak: number
   streakMax: number
-  pontuacoes: any[]
-  checkins: any[]
+  pontuacoes: PontuacaoDia[]
+  checkins: CheckinReuniao[]
   totalLeituras: number
   totalRespostas: number
   totalInventarios: number
@@ -35,7 +48,7 @@ interface Props {
 }
 
 export default function RelatoriosClient({
-  diasLimpo, streak, streakMax, pontuacoes, checkins,
+  streak, streakMax, pontuacoes, checkins,
   totalLeituras, totalRespostas, totalInventarios,
   humoresMes, diasComInventario, anoMes,
 }: Props) {
@@ -94,7 +107,7 @@ export default function RelatoriosClient({
     setInventarioAberto({ data: dataStr, respostas: {} })
     const inv = await buscarInventarioPorData(dataStr)
     if (inv) {
-      setInventarioAberto({ data: dataStr, respostas: inv as any })
+      setInventarioAberto({ data: dataStr, respostas: inv as Record<string, string> })
     }
     setInventarioLoading(false)
   }
@@ -343,7 +356,7 @@ export default function RelatoriosClient({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 90 }}>
-            {ultimos7.map(({ dia, pontos, data }) => {
+            {ultimos7.map(({ pontos, data }) => {
               const isHoje = data === hoje
               const altura = pontos > 0 ? Math.max(8, (pontos / maxVal) * 90) : 8
               const barBg = pontos === 0 ? 'var(--bg-card-2)'
@@ -395,7 +408,7 @@ export default function RelatoriosClient({
             <p style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-1)' }}>Últimas reuniões</p>
           </div>
           <div>
-            {checkins.slice(0, 5).map((c: any, idx: number) => (
+            {checkins.slice(0, 5).map((c, idx) => (
               <div key={c.id} style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 paddingTop: idx > 0 ? '0.75rem' : 0,
@@ -489,7 +502,7 @@ export default function RelatoriosClient({
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {PERGUNTAS_INVENTARIO.map(({ key, titulo, Icon, cor }) => {
-                    const texto = (inventarioAberto.respostas as any)[key] ?? ''
+                    const texto = inventarioAberto.respostas[key] ?? ''
                     if (!texto) return null
                     return (
                       <div key={key}>

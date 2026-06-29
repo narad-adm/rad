@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { hojeEmBRT } from '@/lib/utils'
-import { ChatCircleText, CaretDown, CaretUp, PaperPlaneTilt, CheckCircle, Sparkle } from '@phosphor-icons/react'
+import { ChatCircleText, CaretDown, CaretUp, PaperPlaneTilt, Sparkle } from '@phosphor-icons/react'
 import type { PassoPergunta, RespostaPasso } from '@/lib/types'
 
 interface Props {

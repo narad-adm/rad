@@ -22,6 +22,8 @@ export default function InstallPrompt() {
       || (window.navigator as { standalone?: boolean }).standalone === true
 
     if (isIOS && !isStandalone) {
+      // Detecção de capacidade do browser no mount (SSR-safe) — efeito intencional.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowIOS(true)
       return
     }
@@ -73,7 +75,7 @@ export default function InstallPrompt() {
           </p>
           {showIOS ? (
             <p style={{ fontSize: '0.78rem', color: 'var(--text-2)', lineHeight: 1.5 }}>
-              Toque em <ShareNetwork size={13} weight="bold" style={{ display: 'inline', verticalAlign: 'middle' }} /> e depois <strong>"Adicionar à Tela de Início"</strong> para instalar.
+              Toque em <ShareNetwork size={13} weight="bold" style={{ display: 'inline', verticalAlign: 'middle' }} /> e depois <strong>&quot;Adicionar à Tela de Início&quot;</strong> para instalar.
             </p>
           ) : (
             <p style={{ fontSize: '0.78rem', color: 'var(--text-2)' }}>

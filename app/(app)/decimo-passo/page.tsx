@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { ClipboardText, CheckCircle, Confetti, Star, MagnifyingGlass, HandsPraying, Heart, Warning, Sparkle, Note } from '@phosphor-icons/react'
+import { ClipboardText, CheckCircle, Star, MagnifyingGlass, HandsPraying, Heart, Warning, Sparkle, type Icon } from '@phosphor-icons/react'
 import { buscarInventarioHoje, salvarInventario } from '@/app/actions/inventario'
 
 const PERGUNTAS = [
@@ -12,7 +11,7 @@ const PERGUNTAS = [
   { key: 'acoes_limpeza', titulo: 'Minha recuperação', pergunta: 'O que fiz hoje para me manter limpo(a)?' },
 ]
 
-const PERGUNTA_ICONS: Record<string, React.ComponentType<any>> = {
+const PERGUNTA_ICONS: Record<string, Icon> = {
   honestidade:   MagnifyingGlass,
   admissoes:     HandsPraying,
   contribuicoes: Heart,
@@ -29,7 +28,6 @@ const PERGUNTA_COLORS: Record<string, string> = {
 }
 
 export default function DecimoPasso() {
-  const router = useRouter()
   const [jaFez, setJaFez] = useState(false)
   const [respostas, setRespostas] = useState({
     honestidade: '', admissoes: '', contribuicoes: '', doenca: '', acoes_limpeza: ''

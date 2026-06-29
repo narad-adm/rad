@@ -38,7 +38,7 @@ const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 
 export default function DashboardClient({
   nome, diasLimpo, pontuacaoHoje, porcentagem,
-  nivel, streak, streakMax, reunioesHoje, leuHoje, inventarioHoje,
+  nivel, streak, reunioesHoje, leuHoje, inventarioHoje,
   jaRespondeuHoje: jaRespondeuInicial, humorHoje: humorInicial, userId,
   onboardingConcluido,
 }: Props) {

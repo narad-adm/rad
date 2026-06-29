@@ -193,7 +193,7 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
                   pointerEvents: 'none',
                   userSelect: 'none',
                 }}>
-                  "
+                  &ldquo;
                 </span>
                 <p style={{
                   fontSize: '1rem',

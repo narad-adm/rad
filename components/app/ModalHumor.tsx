@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { HUMORES, type HumorKey, getHumor } from '@/lib/humores'
 
 interface Props {
@@ -12,9 +12,13 @@ export default function ModalHumor({ aberto, onFechar, onSalvar }: Props) {
   const [selecionado, setSelecionado] = useState<HumorKey | null>(null)
   const [salvando, setSalvando] = useState(false)
 
-  useEffect(() => {
+  // Reseta a seleção quando o modal é reaberto (ajuste durante o render,
+  // padrão recomendado em vez de um efeito com setState).
+  const [estavaAberto, setEstavaAberto] = useState(aberto)
+  if (aberto !== estavaAberto) {
+    setEstavaAberto(aberto)
     if (aberto) setSelecionado(null)
-  }, [aberto])
+  }
 
   if (!aberto) return null
 

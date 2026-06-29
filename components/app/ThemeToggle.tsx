@@ -7,8 +7,12 @@ export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // Leitura única do tema já aplicado ao DOM (definido por script
+    // pré-hidratação). O efeito é intencional para evitar mismatch de SSR.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setMounted(true)
     setDark(document.documentElement.classList.contains('dark'))
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [])
 
   function toggle() {

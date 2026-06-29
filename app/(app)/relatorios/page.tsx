@@ -49,7 +49,7 @@ export default async function RelatoriosPage() {
       totalRespostas={respostas.data?.length ?? 0}
       totalInventarios={inventarios.data?.length ?? 0}
       humoresMes={humoresMes.data ?? []}
-      diasComInventario={(inventariosMes.data ?? []).map((i: any) => i.data)}
+      diasComInventario={(inventariosMes.data ?? []).map((i: { data: string }) => i.data)}
       anoMes={{ ano, mes }}
     />
   )

@@ -1,5 +1,6 @@
 import BottomNav from '@/components/app/BottomNav'
 import InstallPrompt from '@/components/app/InstallPrompt'
+import RegistrarAcesso from '@/components/app/RegistrarAcesso'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </main>
       <BottomNav />
       <InstallPrompt />
+      <RegistrarAcesso />
     </div>
   )
 }

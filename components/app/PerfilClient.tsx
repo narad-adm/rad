@@ -232,7 +232,7 @@ function ModalRankingInfo({ onConfirmar, onFechar }: { onConfirmar: () => void; 
 }
 
 // ── Componente principal ──────────────────────────────────────
-export default function PerfilClient({ perfil, temNotificacao, userId, email }: Props) {
+export default function PerfilClient({ perfil, temNotificacao, userId }: Props) {
   const router = useRouter()
   const supabase = createClient()
 
@@ -259,6 +259,8 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
   const [toastConvite, setToastConvite] = useState(false)
 
   useEffect(() => {
+    // Detecção de suporte/permissão de push no mount (SSR-safe) — efeito intencional.
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       setNotifSuportada(false); return
     }
@@ -272,6 +274,7 @@ export default function PerfilClient({ perfil, temNotificacao, userId, email }: 
     if (Notification.permission === 'denied') {
       setNotifBloqueada(true); return
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription()
       setNotifOn(!!sub)

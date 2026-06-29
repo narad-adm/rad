@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function ModoFocoClient({
-  passo, nomePasso, topicoNome, topicoSlug,
+  passo, nomePasso, topicoNome,
   perguntas, respostasIniciais, userId,
 }: Props) {
   const router = useRouter()
@@ -41,7 +41,7 @@ export default function ModoFocoClient({
   const [respostasMap, setRespostasMap] = useState<Record<string, RespostaInfo>>(respostasIniciais)
   const [rascunho, setRascunho] = useState(respostasIniciais[perguntas[primeiraIdx]?.id]?.texto ?? '')
   const [salvando, setSalvando] = useState(false)
-  const [ultimoSalvo, setUltimoSalvo] = useState<Date | null>(null)
+  const [, setUltimoSalvo] = useState<Date | null>(null)
   const [mostrarSalvo, setMostrarSalvo] = useState(false)
   const [fadeKey, setFadeKey] = useState(0)
 

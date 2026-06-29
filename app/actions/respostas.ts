@@ -1,6 +1,6 @@
 'use server'
 import { createClient } from '@/lib/supabase/server'
-import { encrypt, decrypt } from '@/lib/crypto'
+import { encrypt } from '@/lib/crypto'
 import { atualizarStreak } from './streak'
 
 export async function inserirRespostaPasso(perguntaId: string, texto: string) {
