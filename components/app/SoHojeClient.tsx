@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { hojeEmBRT } from '@/lib/utils'
-import { BookOpenText, CheckCircle, SunHorizon } from '@phosphor-icons/react'
+import { BookOpenText, CheckCircle, ShareNetwork, SunHorizon } from '@phosphor-icons/react'
 import type { SoPorHoje } from '@/lib/types'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
 
@@ -23,6 +23,41 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
   const agora = new Date()
   const diaSemana = DIAS_SEMANA[agora.getDay()]
   const nomeMes = MESES[mes - 1]
+
+  function buildShareText() {
+    if (!texto) return ''
+    const linhas: string[] = []
+    linhas.push(`${diaSemana}, ${dia} de ${nomeMes}`)
+    linhas.push(``)
+    linhas.push(texto.titulo)
+    if (texto.citacao) {
+      linhas.push(``)
+      linhas.push(`"${texto.citacao}"`)
+      linhas.push(`— Texto Básico de NA`)
+    }
+    linhas.push(``)
+    texto.texto.split('\n').filter(p => p.trim()).forEach(p => linhas.push(p))
+    if (texto.afirmacao) {
+      linhas.push(``)
+      linhas.push(`Só por hoje`)
+      linhas.push(texto.afirmacao)
+    }
+    return linhas.join('\n')
+  }
+
+  async function handleCompartilhar() {
+    const shareText = buildShareText()
+    if (!shareText) return
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: shareText })
+      } catch {
+        // usuário cancelou
+      }
+    } else {
+      await navigator.clipboard.writeText(shareText)
+    }
+  }
 
   async function handleMarcarLido() {
     if (jaLeu || !texto) return
@@ -119,11 +154,31 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
 
         {/* ── Header ──────────────────────────────────── */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: '0.375rem' }}>
-            <BookOpenText size={16} weight="duotone" color="var(--duo-blue)" />
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--text-3)' }}>
-              SÓ POR HOJE
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: '0.375rem' }}>
+              <BookOpenText size={16} weight="duotone" color="var(--duo-blue)" />
+              <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--text-3)' }}>
+                SÓ POR HOJE
+              </span>
+            </div>
+            {texto && (
+              <button
+                onClick={handleCompartilhar}
+                title="Compartilhar meditação"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.25rem',
+                  borderRadius: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'var(--text-3)',
+                }}
+              >
+                <ShareNetwork size={20} weight="regular" />
+              </button>
+            )}
           </div>
           <p style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-2)', marginBottom: '0.5rem' }}>
             {diaSemana}, {dia} de {nomeMes}
