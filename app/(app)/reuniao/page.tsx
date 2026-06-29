@@ -7,6 +7,7 @@ import {
   CheckCircle, UsersFour, Rows, BookOpenText, CalendarDots, Books, Star, Circle, Confetti, Fire, Handshake,
 } from '@phosphor-icons/react'
 import type { TipoReuniao } from '@/lib/types'
+import { atualizarStreak } from '@/app/actions/streak'
 
 const ICONES: Record<string, React.ComponentType<any>> = {
   Users: UsersFour,
@@ -82,27 +83,7 @@ export default function ReuniaoPage() {
       })
     }
 
-    await atualizarStreak(userId, hoje)
-  }
-
-  async function atualizarStreak(userId: string, hoje: string) {
-    const { data } = await supabase.from('streaks').select('*').eq('usuario_id', userId).single()
-    if (!data) return
-
-    const ontem = new Date()
-    ontem.setDate(ontem.getDate() - 1)
-    const ontemStr = ontem.toISOString().split('T')[0]
-
-    const novoStreak = data.ultimo_dia_ativo === ontemStr || data.ultimo_dia_ativo === hoje
-      ? (data.ultimo_dia_ativo === hoje ? data.streak_atual : data.streak_atual + 1)
-      : 1
-
-    await supabase.from('streaks').update({
-      streak_atual: novoStreak,
-      streak_maximo: Math.max(novoStreak, data.streak_maximo),
-      ultimo_dia_ativo: hoje,
-      atualizado_em: new Date().toISOString(),
-    }).eq('usuario_id', userId)
+    await atualizarStreak()
   }
 
   if (etapa === 'sucesso') {

@@ -1,6 +1,7 @@
 'use server'
 import { createClient } from '@/lib/supabase/server'
 import { encrypt, decrypt } from '@/lib/crypto'
+import { atualizarStreak } from './streak'
 
 export async function inserirRespostaPasso(perguntaId: string, texto: string) {
   const supabase = await createClient()
@@ -19,6 +20,7 @@ export async function inserirRespostaPasso(perguntaId: string, texto: string) {
     .single()
 
   if (error) throw error
+  await atualizarStreak()
   return { ...data, resposta: texto }
 }
 

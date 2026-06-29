@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { hojeEmBRT } from '@/lib/utils'
+import { atualizarStreak } from '@/app/actions/streak'
 import { BookOpenText, CheckCircle, ShareNetwork, SunHorizon } from '@phosphor-icons/react'
 import type { SoPorHoje } from '@/lib/types'
 import { MESES, DIAS_SEMANA } from '@/lib/types'
@@ -91,6 +92,7 @@ export default function SoHojeClient({ texto, jaLeu: jaLeuInicial, userId, mes, 
       })
     }
 
+    await atualizarStreak()
     setJaLeu(true)
     setLoading(false)
     setBanner(true)

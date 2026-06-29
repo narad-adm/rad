@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { encrypt, decrypt } from '@/lib/crypto'
 import { hojeEmBRT } from '@/lib/utils'
+import { atualizarStreak } from './streak'
 
 type CamposInventario = {
   honestidade: string
@@ -102,6 +103,8 @@ export async function salvarInventario(respostas: CamposInventario): Promise<voi
   })
 
   if (error) throw error
+
+  await atualizarStreak()
 
   const { data } = await supabase
     .from('pontuacao_diaria')
