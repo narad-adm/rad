@@ -317,12 +317,11 @@ export default function ModoFocoClient({
         `}</style>
         <button
           onClick={handleMic}
-          className={micState === 'idle' ? 'btn-outline' : 'btn-primary'}
+          className="btn-primary"
           style={{
             width: '100%',
             background: micState === 'recording' ? '#ef4444' : undefined,
             borderBottomColor: micState === 'recording' ? '#b91c1c' : undefined,
-            borderColor: micState === 'idle' ? 'var(--duo-blue)' : undefined,
           }}
         >
           {micState === 'idle' && (
@@ -374,7 +373,7 @@ export default function ModoFocoClient({
       <div style={{
         flexShrink: 0,
         padding: '0.75rem 1rem',
-        paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
+        paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))',
         background: 'var(--bg)',
         borderTop: '1px solid var(--border)',
         display: 'flex', gap: '0.75rem',
@@ -385,7 +384,7 @@ export default function ModoFocoClient({
           className="btn-ghost"
           style={{ flex: 1, opacity: ehPrimeira ? 0.3 : 1 }}
         >
-          ← Anterior
+          Anterior
         </button>
 
         {ehUltima ? (
@@ -411,7 +410,7 @@ export default function ModoFocoClient({
             className="btn-primary"
             style={{ flex: 1 }}
           >
-            Próxima →
+            Próxima
           </button>
         )}
       </div>
