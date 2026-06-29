@@ -9,7 +9,7 @@ import {
 } from '@phosphor-icons/react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { MESES, DIAS_SEMANA } from '@/lib/types'
+import { MESES, DIAS_SEMANA, calcularTempoLimpo } from '@/lib/types'
 import ThemeToggle from '@/components/app/ThemeToggle'
 import HumorBalloon from '@/components/app/HumorBalloon'
 import ModalHumor from '@/components/app/ModalHumor'
@@ -37,7 +37,7 @@ interface Props {
 const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 
 export default function DashboardClient({
-  nome, diasLimpo, pontuacaoHoje, porcentagem,
+  nome, dataLimpeza, pontuacaoHoje, porcentagem,
   nivel, streak, reunioesHoje, leuHoje, inventarioHoje,
   jaRespondeuHoje: jaRespondeuInicial, humorHoje: humorInicial, userId,
   onboardingConcluido,
@@ -54,9 +54,7 @@ export default function DashboardClient({
   const dia = agora.getDate()
   const mes = MESES[agora.getMonth()]
 
-  const anos  = Math.floor(diasLimpo / 365)
-  const meses = Math.floor((diasLimpo % 365) / 30)
-  const dias  = diasLimpo % 30
+  const { anos, meses, dias } = calcularTempoLimpo(dataLimpeza)
 
   const jsDay = agora.getDay()
   const todayMon = jsDay === 0 ? 6 : jsDay - 1

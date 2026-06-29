@@ -149,6 +149,44 @@ export function calcularDiasLimpo(dataLimpeza: string): number {
   return Math.floor(diff / (1000 * 60 * 60 * 24))
 }
 
+/** Soma `n` meses a uma data, fazendo clamp do dia ao último dia do mês de destino. */
+function somarMeses(data: Date, n: number): Date {
+  const totalMeses = data.getMonth() + n
+  const ano = data.getFullYear() + Math.floor(totalMeses / 12)
+  const mes = ((totalMeses % 12) + 12) % 12
+  const ultimoDia = new Date(ano, mes + 1, 0).getDate()
+  return new Date(ano, mes, Math.min(data.getDate(), ultimoDia))
+}
+
+/**
+ * Quebra o tempo limpo em anos, meses e dias de calendário reais
+ * (não usa aproximações de 365/30, que acumulam erro). Conta meses
+ * inteiros a partir da data de limpeza e o restante em dias, tratando
+ * meses de tamanhos diferentes. Ex.: uma data 404 dias atrás →
+ * { anos: 1, meses: 1, dias: 8 }.
+ */
+export function calcularTempoLimpo(
+  dataLimpeza: string
+): { anos: number; meses: number; dias: number } {
+  // Força meia-noite local para evitar deslocamento de fuso ao parsear "YYYY-MM-DD".
+  const inicio = new Date(`${dataLimpeza.slice(0, 10)}T00:00:00`)
+  const agora = new Date()
+  const fim = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate())
+
+  if (fim <= inicio) return { anos: 0, meses: 0, dias: 0 }
+
+  // Maior número de meses inteiros cujo avanço a partir de `inicio` não passa de `fim`.
+  let meses =
+    (fim.getFullYear() - inicio.getFullYear()) * 12 +
+    (fim.getMonth() - inicio.getMonth())
+  if (somarMeses(inicio, meses) > fim) meses -= 1
+
+  const marco = somarMeses(inicio, meses)
+  const dias = Math.floor((fim.getTime() - marco.getTime()) / 86_400_000)
+
+  return { anos: Math.floor(meses / 12), meses: meses % 12, dias }
+}
+
 export const DIAS_SEMANA = [
   'Domingo', 'Segunda', 'Terça', 'Quarta',
   'Quinta', 'Sexta', 'Sábado'
