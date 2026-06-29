@@ -309,7 +309,65 @@ export default function ModoFocoClient({
 
       {/* ── Voice button ── */}
       <div style={{ flexShrink: 0, padding: '0.5rem 1rem 0' }}>
-        <VoiceButton state={micState} onClick={handleMic} />
+        <style>{`
+          @keyframes bar-bounce {
+            0%, 100% { transform: scaleY(0.4); }
+            50%       { transform: scaleY(1); }
+          }
+        `}</style>
+        <button
+          onClick={handleMic}
+          className={micState === 'idle' ? 'btn-outline' : 'btn-primary'}
+          style={{
+            width: '100%',
+            background: micState === 'recording' ? '#ef4444' : undefined,
+            borderBottomColor: micState === 'recording' ? '#b91c1c' : undefined,
+            borderColor: micState === 'idle' ? 'var(--duo-blue)' : undefined,
+          }}
+        >
+          {micState === 'idle' && (
+            <>
+              <Microphone size={20} weight="bold" />
+              Gravar resposta
+            </>
+          )}
+
+          {micState === 'recording' && (
+            <>
+              {/* Waveform bars */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 3, height: 20 }}>
+                {[0.6, 0.9, 1.0, 0.75, 0.85, 0.65, 0.95].map((delay, i) => (
+                  <div key={i} style={{
+                    width: 4, height: 20, borderRadius: 4,
+                    background: 'rgba(255,255,255,0.9)',
+                    transformOrigin: 'center',
+                    animation: `bar-bounce ${delay}s ease-in-out infinite`,
+                    animationDelay: `${i * 0.07}s`,
+                  }} />
+                ))}
+              </div>
+              <Stop size={18} weight="bold" />
+              Parar
+            </>
+          )}
+
+          {micState === 'transcribing' && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 3, height: 20 }}>
+                {[0, 1, 2, 3, 4].map(i => (
+                  <div key={i} style={{
+                    width: 4, height: 20, borderRadius: 4,
+                    background: 'rgba(255,255,255,0.7)',
+                    transformOrigin: 'center',
+                    animation: `bar-bounce 0.7s ease-in-out infinite`,
+                    animationDelay: `${i * 0.12}s`,
+                  }} />
+                ))}
+              </div>
+              Transcrevendo...
+            </>
+          )}
+        </button>
       </div>
 
       {/* ── Footer ── */}
@@ -361,145 +419,4 @@ export default function ModoFocoClient({
   )
 }
 
-// ── Waveform bars config (from design) ───────────────────────────────────────
-const BARS: { bgH: number; fgH: number }[] = [
-  { bgH: 19, fgH: 14 },
-  { bgH: 26, fgH: 20 },
-  { bgH: 63, fgH: 47 },
-  { bgH: 68, fgH: 52 },
-  { bgH: 37, fgH: 28 },
-  { bgH: 57, fgH: 43 },
-  { bgH: 34, fgH: 26 },
-  { bgH: 19, fgH: 16 },
-  { bgH: 12, fgH:  9 },
-]
-const MAX_H = 68
-
 type MicState = 'idle' | 'recording' | 'transcribing'
-
-function VoiceButton({ state, onClick }: { state: MicState; onClick: () => void }) {
-  const isIdle = state === 'idle'
-  const isRecording = state === 'recording'
-  const isProcessing = state === 'transcribing'
-
-  return (
-    <>
-      <style>{`
-        @keyframes vbar {
-          0%, 100% { transform: scaleY(0.3); }
-          50%       { transform: scaleY(1); }
-        }
-        @keyframes vbar-proc {
-          0%, 100% { opacity: 0.3; }
-          50%       { opacity: 1; }
-        }
-      `}</style>
-
-      {/* outer shadow track */}
-      <div style={{
-        background: '#E5E5E5',
-        borderRadius: 13,
-        padding: '1.5px',
-        width: '100%',
-      }}>
-        <button
-          onClick={onClick}
-          disabled={false}
-          style={{
-            width: '100%',
-            height: 64,
-            borderRadius: 13,
-            border: '2px solid #E5E5E5',
-            background: '#FFFFFF',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            transition: 'border-color 0.2s',
-          }}
-        >
-          {isIdle && (
-            <>
-              {/* Mic icon — matches Figma: rect body + arc */}
-              <svg width="15" height="22" viewBox="0 0 15 22" fill="none">
-                <rect x="2.14" y="0" width="10.72" height="15.13" rx="5.36" fill="#1CB0F6" />
-                <path d="M0 9.28C0 13.72 3.36 17.32 7.5 17.32C11.64 17.32 15 13.72 15 9.28" stroke="#1CB0F6" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <line x1="7.5" y1="17.32" x2="7.5" y2="22" stroke="#1CB0F6" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1CB0F6' }}>
-                Gravar resposta
-              </span>
-            </>
-          )}
-
-          {isRecording && (
-            <>
-              {/* Waveform animated */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, height: MAX_H }}>
-                {BARS.map((bar, i) => (
-                  <div key={i} style={{ position: 'relative', width: 8, height: MAX_H, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {/* bg bar */}
-                    <div style={{
-                      position: 'absolute',
-                      width: 8,
-                      height: bar.bgH,
-                      background: '#DDF4FF',
-                      borderRadius: 24,
-                      transformOrigin: 'center',
-                      animation: `vbar ${0.6 + i * 0.07}s ease-in-out infinite`,
-                      animationDelay: `${i * 0.06}s`,
-                    }} />
-                    {/* fg bar */}
-                    <div style={{
-                      position: 'absolute',
-                      width: 8,
-                      height: bar.fgH,
-                      background: '#1CB0F6',
-                      borderRadius: 24,
-                      transformOrigin: 'center',
-                      animation: `vbar ${0.6 + i * 0.07}s ease-in-out infinite`,
-                      animationDelay: `${i * 0.06 + 0.05}s`,
-                    }} />
-                  </div>
-                ))}
-              </div>
-              <Stop size={16} weight="bold" color="#1CB0F6" style={{ marginLeft: 8 }} />
-            </>
-          )}
-
-          {isProcessing && (
-            <>
-              {/* Bars pulsing uniformly = "IA pensando" */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, height: MAX_H }}>
-                {BARS.map((bar, i) => (
-                  <div key={i} style={{ position: 'relative', width: 8, height: MAX_H, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{
-                      position: 'absolute',
-                      width: 8,
-                      height: bar.bgH,
-                      background: '#DDF4FF',
-                      borderRadius: 24,
-                    }} />
-                    <div style={{
-                      position: 'absolute',
-                      width: 8,
-                      height: bar.fgH,
-                      background: '#1CB0F6',
-                      borderRadius: 24,
-                      animation: `vbar-proc 0.8s ease-in-out infinite`,
-                      animationDelay: `${i * 0.08}s`,
-                    }} />
-                  </div>
-                ))}
-              </div>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1CB0F6', marginLeft: 8 }}>
-                Processando...
-              </span>
-            </>
-          )}
-        </button>
-      </div>
-    </>
-  )
-}
