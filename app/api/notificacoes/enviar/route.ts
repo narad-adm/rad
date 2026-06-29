@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import webpush from 'web-push'
 
 export async function POST(req: NextRequest) {
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   const { titulo, corpo, url, usuario_id } = await req.json()
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   let query = supabase.from('push_subscriptions').select('*')
   if (usuario_id) query = query.eq('usuario_id', usuario_id)
