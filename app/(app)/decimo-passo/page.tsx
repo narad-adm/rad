@@ -72,12 +72,34 @@ export default function DecimoPasso() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <Note size={40} weight="duotone" color="var(--text-3)" style={{ marginBottom: 12 }} />
-          <p style={{ color: 'var(--text-3)' }}>Carregando...</p>
+      <>
+        <style>{`
+          @keyframes sk-shimmer {
+            0%   { background-position: -200% 0; }
+            100% { background-position:  200% 0; }
+          }
+          .sk {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-2) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: sk-shimmer 1.4s ease-in-out infinite;
+            border-radius: 10px;
+          }
+        `}</style>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <div className="sk" style={{ height: 12, width: 120, borderRadius: 6 }} />
+              <div className="sk" style={{ height: 26, width: 100, borderRadius: 8 }} />
+              <div className="sk" style={{ height: 14, width: 200, borderRadius: 6 }} />
+            </div>
+            <div className="sk" style={{ width: 48, height: 48, borderRadius: 16, flexShrink: 0 }} />
+          </div>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="sk" style={{ height: 130, borderRadius: 16 }} />
+          ))}
+          <div className="sk" style={{ height: 52, borderRadius: 13 }} />
         </div>
-      </div>
+      </>
     )
   }
 
