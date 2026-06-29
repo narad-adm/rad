@@ -133,7 +133,7 @@ export default function DecimoPasso() {
 
       <div className="space-y-4">
         {PERGUNTAS.map(({ key, titulo, pergunta }) => (
-          <div key={key} className="card space-y-3">
+          <div key={key} className="card space-y-3" style={{ borderBottom: '4px solid var(--border)', boxShadow: 'none' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {(() => { const Icon = PERGUNTA_ICONS[key]; const color = PERGUNTA_COLORS[key]; return <Icon size={16} weight="duotone" color={color} /> })()}
