@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GOOGLE_AI_API_KEY
   if (!apiKey) return NextResponse.json({ error: 'Chave não configurada' }, { status: 500 })
