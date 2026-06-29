@@ -1,15 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import SoHojeClient from '@/components/app/SoHojeClient'
+import { hojeEmBRT } from '@/lib/utils'
 
 export default async function SoHojePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const hoje = new Date()
-  const mes = hoje.getMonth() + 1
-  const dia = hoje.getDate()
+  const hojeStr = hojeEmBRT()
+  const [, mesStr, diaStr] = hojeStr.split('-')
+  const mes = parseInt(mesStr, 10)
+  const dia = parseInt(diaStr, 10)
 
   const [textoData, leituraData] = await Promise.all([
     supabase
@@ -22,7 +24,7 @@ export default async function SoHojePage() {
       .from('leituras_spj')
       .select('id')
       .eq('usuario_id', user.id)
-      .eq('data', hoje.toISOString().split('T')[0])
+      .eq('data', hojeStr)
       .single(),
   ])
 
