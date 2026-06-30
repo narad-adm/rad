@@ -5,7 +5,7 @@ import { hojeEmBRT } from '@/lib/utils'
 import {
   Fire, HandWaving,
   CalendarCheck, BookOpenText, ClipboardText, ChatCircleText,
-  CaretRight, Leaf, LightningA, UserCircle,
+  CaretRight, Avocado, LightningA, UserCircle,
 } from '@phosphor-icons/react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -35,6 +35,19 @@ interface Props {
 }
 
 const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+
+function getFichaColor(anos: number, meses: number): { color: string; bg: string; border: string } {
+  const m = anos * 12 + meses
+  if (m >= 24) return { color: '#1a1a1a',   bg: 'rgba(26,26,26,0.12)',    border: '#1a1a1a' }   // preta
+  if (m >= 18) return { color: '#6b7280',   bg: 'rgba(107,114,128,0.12)', border: '#6b7280' }   // cinza
+  if (m >= 12) return { color: '#b8ff00',   bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00' }   // neon
+  if (m >= 9)  return { color: '#f59e0b',   bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b' }   // amarela
+  if (m >= 6)  return { color: '#3b82f6',   bg: 'rgba(59,130,246,0.12)',  border: '#3b82f6' }   // azul
+  if (m >= 3)  return { color: '#ef4444',   bg: 'rgba(239,68,68,0.12)',   border: '#ef4444' }   // vermelha
+  if (m >= 2)  return { color: '#22c55e',   bg: 'rgba(34,197,94,0.12)',   border: '#22c55e' }   // verde
+  if (m >= 1)  return { color: '#f97316',   bg: 'rgba(249,115,22,0.12)',  border: '#f97316' }   // laranja
+  return         { color: '#d1d5db',   bg: 'rgba(209,213,219,0.15)', border: '#d1d5db' }        // branca
+}
 
 export default function DashboardClient({
   nome, dataLimpeza, pontuacaoHoje, porcentagem,
@@ -125,13 +138,19 @@ export default function DashboardClient({
           display: 'flex', alignItems: 'center', gap: '0.875rem',
           borderBottom: '2px solid var(--border)',
         }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 14, flexShrink: 0,
-            background: 'var(--duo-blue-bg)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '2px solid var(--duo-blue)',
-          }}>
-            <Leaf size={22} weight="duotone" color="var(--duo-blue)" />
+          {(() => {
+            const ficha = getFichaColor(anos, meses)
+            return (
+              <div style={{
+                width: 44, height: 44, borderRadius: 14, flexShrink: 0,
+                background: ficha.bg,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: `2px solid ${ficha.border}`,
+              }}>
+                <Avocado size={24} weight="duotone" color={ficha.color} />
+              </div>
+            )
+          })()}
           </div>
           <div style={{ flex: 1 }}>
             <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.25rem' }}>
