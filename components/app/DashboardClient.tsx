@@ -1,11 +1,12 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { hojeEmBRT } from '@/lib/utils'
 import {
   Fire, HandWaving,
   CalendarCheck, BookOpenText, ClipboardText, ChatCircleText,
-  CaretRight, Leaf, LightningA, UserCircle,
+  CaretRight, LightningA, UserCircle,
 } from '@phosphor-icons/react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -35,6 +36,19 @@ interface Props {
 }
 
 const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+
+function getFicha(anos: number, meses: number): string {
+  const m = anos * 12 + meses
+  if (m >= 24) return 'preta'
+  if (m >= 18) return 'cinza'
+  if (m >= 12) return 'neon'
+  if (m >= 9)  return 'amarela'
+  if (m >= 6)  return 'azul'
+  if (m >= 3)  return 'vermelha'
+  if (m >= 2)  return 'verde'
+  if (m >= 1)  return 'laranja'
+  return 'branca'
+}
 
 export default function DashboardClient({
   nome, dataLimpeza, pontuacaoHoje, porcentagem,
@@ -126,12 +140,20 @@ export default function DashboardClient({
           borderBottom: '2px solid var(--border)',
         }}>
           <div style={{
-            width: 44, height: 44, borderRadius: 14, flexShrink: 0,
-            background: 'var(--duo-blue-bg)',
+            width: 48, height: 48, borderRadius: 10, flexShrink: 0,
+            background: '#ffffff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '2px solid var(--duo-blue)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
+            padding: 3,
           }}>
-            <Leaf size={22} weight="duotone" color="var(--duo-blue)" />
+            <Image
+              src={`/icons/${getFicha(anos, meses)}.png`}
+              alt="Ficha de tempo limpo"
+              width={42}
+              height={42}
+              style={{ objectFit: 'contain' }}
+              priority
+            />
           </div>
           <div style={{ flex: 1 }}>
             <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.25rem' }}>
