@@ -151,7 +151,6 @@ export default function DashboardClient({
               </div>
             )
           })()}
-          </div>
           <div style={{ flex: 1 }}>
             <p style={{ color: 'var(--text-3)', fontSize: '0.63rem', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.25rem' }}>
               TEMPO LIMPO
