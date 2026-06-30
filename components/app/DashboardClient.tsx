@@ -140,17 +140,14 @@ export default function DashboardClient({
           borderBottom: '2px solid var(--border)',
         }}>
           <div style={{
-            width: 48, height: 48, borderRadius: 10, flexShrink: 0,
-            background: '#ffffff',
+            width: 48, height: 48, flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
-            padding: 3,
           }}>
             <Image
               src={`/icons/${getFicha(anos, meses)}.png`}
               alt="Ficha de tempo limpo"
-              width={42}
-              height={42}
+              width={48}
+              height={48}
               style={{ objectFit: 'contain' }}
               priority
             />
