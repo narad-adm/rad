@@ -41,14 +41,14 @@ function getFichaColor(anos: number, meses: number, isDark: boolean): { color: s
   if (m >= 24) return isDark
     ? { color: '#ffffff', bg: '#111111', border: '#888888', shadow: '0 3px 0 #555555' }
     : { color: '#1a1a1a', bg: 'rgba(26,26,26,0.08)', border: '#1a1a1a', shadow: '0 3px 0 #1a1a1a' }
-  if (m >= 18) return { color: '#6b7280',   bg: 'rgba(107,114,128,0.12)', border: '#6b7280' }
-  if (m >= 12) return { color: '#b8ff00',   bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00' }
-  if (m >= 9)  return { color: '#f59e0b',   bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b' }
-  if (m >= 6)  return { color: '#3b82f6',   bg: 'rgba(59,130,246,0.12)',  border: '#3b82f6' }
-  if (m >= 3)  return { color: '#ef4444',   bg: 'rgba(239,68,68,0.12)',   border: '#ef4444' }
-  if (m >= 2)  return { color: '#22c55e',   bg: 'rgba(34,197,94,0.12)',   border: '#22c55e' }
-  if (m >= 1)  return { color: '#f97316',   bg: 'rgba(249,115,22,0.12)',  border: '#f97316' }
-  return         { color: '#d1d5db',   bg: 'rgba(209,213,219,0.15)', border: '#d1d5db' }
+  if (m >= 18) return { color: '#6b7280', bg: 'rgba(107,114,128,0.12)', border: '#6b7280', shadow: '0 3px 0 #4b5563' }
+  if (m >= 12) return { color: '#b8ff00', bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00', shadow: '0 3px 0 #7acc00' }
+  if (m >= 9)  return { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b', shadow: '0 3px 0 #b45309' }
+  if (m >= 6)  return { color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  border: '#3b82f6', shadow: '0 3px 0 #1d4ed8' }
+  if (m >= 3)  return { color: '#ef4444', bg: 'rgba(239,68,68,0.12)',   border: '#ef4444', shadow: '0 3px 0 #b91c1c' }
+  if (m >= 2)  return { color: '#22c55e', bg: 'rgba(34,197,94,0.12)',   border: '#22c55e', shadow: '0 3px 0 #15803d' }
+  if (m >= 1)  return { color: '#f97316', bg: 'rgba(249,115,22,0.12)',  border: '#f97316', shadow: '0 3px 0 #c2410c' }
+  return         { color: '#9ca3af', bg: 'rgba(209,213,219,0.15)', border: '#d1d5db',  shadow: '0 3px 0 #9ca3af' }
 }
 
 export default function DashboardClient({
