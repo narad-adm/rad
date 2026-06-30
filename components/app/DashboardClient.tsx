@@ -40,7 +40,7 @@ function getFichaColor(anos: number, meses: number, isDark: boolean): { color: s
   const m = anos * 12 + meses
   if (m >= 24) return isDark
     ? { color: '#ffffff', bg: '#111111', border: '#444444', shadow: '0 3px 0 #222222' }
-    : { color: '#1a1a1a', bg: 'rgba(26,26,26,0.08)', border: 'var(--border)', shadow: '0 3px 0 var(--border)' }
+    : { color: '#1a1a1a', bg: 'rgba(26,26,26,0.08)', border: '#1a1a1a', shadow: '0 3px 0 #1a1a1a' }
   if (m >= 18) return { color: '#6b7280',   bg: 'rgba(107,114,128,0.12)', border: '#6b7280' }
   if (m >= 12) return { color: '#b8ff00',   bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00' }
   if (m >= 9)  return { color: '#f59e0b',   bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b' }
