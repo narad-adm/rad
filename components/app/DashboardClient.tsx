@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { hojeEmBRT } from '@/lib/utils'
 import {
@@ -36,17 +36,19 @@ interface Props {
 
 const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 
-function getFichaColor(anos: number, meses: number): { color: string; bg: string; border: string } {
+function getFichaColor(anos: number, meses: number, isDark: boolean): { color: string; bg: string; border: string; shadow?: string } {
   const m = anos * 12 + meses
-  if (m >= 24) return { color: '#ffffff',   bg: '#111111',                border: '#444444' }   // preta
-  if (m >= 18) return { color: '#6b7280',   bg: 'rgba(107,114,128,0.12)', border: '#6b7280' }   // cinza
-  if (m >= 12) return { color: '#b8ff00',   bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00' }   // neon
-  if (m >= 9)  return { color: '#f59e0b',   bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b' }   // amarela
-  if (m >= 6)  return { color: '#3b82f6',   bg: 'rgba(59,130,246,0.12)',  border: '#3b82f6' }   // azul
-  if (m >= 3)  return { color: '#ef4444',   bg: 'rgba(239,68,68,0.12)',   border: '#ef4444' }   // vermelha
-  if (m >= 2)  return { color: '#22c55e',   bg: 'rgba(34,197,94,0.12)',   border: '#22c55e' }   // verde
-  if (m >= 1)  return { color: '#f97316',   bg: 'rgba(249,115,22,0.12)',  border: '#f97316' }   // laranja
-  return         { color: '#d1d5db',   bg: 'rgba(209,213,219,0.15)', border: '#d1d5db' }        // branca
+  if (m >= 24) return isDark
+    ? { color: '#ffffff', bg: '#111111', border: '#444444', shadow: '0 3px 0 #222222' }
+    : { color: '#1a1a1a', bg: 'rgba(26,26,26,0.08)', border: 'var(--border)', shadow: '0 3px 0 var(--border)' }
+  if (m >= 18) return { color: '#6b7280',   bg: 'rgba(107,114,128,0.12)', border: '#6b7280' }
+  if (m >= 12) return { color: '#b8ff00',   bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00' }
+  if (m >= 9)  return { color: '#f59e0b',   bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b' }
+  if (m >= 6)  return { color: '#3b82f6',   bg: 'rgba(59,130,246,0.12)',  border: '#3b82f6' }
+  if (m >= 3)  return { color: '#ef4444',   bg: 'rgba(239,68,68,0.12)',   border: '#ef4444' }
+  if (m >= 2)  return { color: '#22c55e',   bg: 'rgba(34,197,94,0.12)',   border: '#22c55e' }
+  if (m >= 1)  return { color: '#f97316',   bg: 'rgba(249,115,22,0.12)',  border: '#f97316' }
+  return         { color: '#d1d5db',   bg: 'rgba(209,213,219,0.15)', border: '#d1d5db' }
 }
 
 export default function DashboardClient({
@@ -61,6 +63,15 @@ export default function DashboardClient({
   const [jaRespondeuHoje, setJaRespondeuHoje] = useState(jaRespondeuInicial)
   const [humorHoje, setHumorHoje] = useState<string | null>(humorInicial)
   const [mostrarOnboarding, setMostrarOnboarding] = useState(!onboardingConcluido)
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    const update = () => setIsDark(document.documentElement.classList.contains('dark'))
+    update()
+    const obs = new MutationObserver(update)
+    obs.observe(document.documentElement, { attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
 
   const agora = new Date()
   const diaSemana = DIAS_SEMANA[agora.getDay()]
@@ -139,13 +150,14 @@ export default function DashboardClient({
           borderBottom: '2px solid var(--border)',
         }}>
           {(() => {
-            const ficha = getFichaColor(anos, meses)
+            const ficha = getFichaColor(anos, meses, isDark)
             return (
               <div style={{
                 width: 44, height: 44, borderRadius: 14, flexShrink: 0,
                 background: ficha.bg,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: `2px solid ${ficha.border}`,
+                ...(ficha.shadow && { boxShadow: ficha.shadow }),
               }}>
                 <Avocado size={24} weight="duotone" color={ficha.color} />
               </div>

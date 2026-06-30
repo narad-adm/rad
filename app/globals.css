@@ -75,6 +75,7 @@ html.dark {
   --trophy-card-bg:  #1f1a00;
 }
 
+
 @layer base {
   body {
     background-color: var(--bg);
