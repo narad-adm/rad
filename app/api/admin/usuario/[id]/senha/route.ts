@@ -4,7 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 type Params = Promise<{ id: string }>
 
-export async function POST(_req: NextRequest, { params }: { params: Params }) {
+export async function POST(req: NextRequest, { params }: { params: Params }) {
   const admin = await isAdmin()
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
@@ -16,9 +16,14 @@ export async function POST(_req: NextRequest, { params }: { params: Params }) {
     return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
   }
 
+  // Deriva a origem da própria requisição para funcionar tanto em dev quanto produção
+  const origin = req.headers.get('origin') ?? req.headers.get('x-forwarded-host')
+  const baseUrl = origin?.startsWith('http') ? origin : `https://${origin}`
+
   const { data, error } = await supabase.auth.admin.generateLink({
     type: 'recovery',
     email: user.email,
+    options: { redirectTo: `${baseUrl}/redefinir-senha` },
   })
   if (error || !data) {
     return NextResponse.json({ error: error?.message ?? 'Erro ao gerar link' }, { status: 500 })
