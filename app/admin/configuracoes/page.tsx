@@ -1,13 +1,17 @@
 import Link from 'next/link'
-import { Flask, ShieldCheck, Database, ArrowSquareOut } from '@phosphor-icons/react/dist/ssr'
-import { getResumoUsuarios } from '@/lib/admin/queries'
+import { Flask, ShieldCheck, Database, ArrowSquareOut, MegaphoneSimple } from '@phosphor-icons/react/dist/ssr'
+import { getResumoUsuarios, getBannersAdmin } from '@/lib/admin/queries'
 import { ADMIN_EMAIL } from '@/lib/admin-auth'
 import ExportarCSV from '@/components/admin/ExportarCSV'
+import GerenciarBanner from '@/components/admin/GerenciarBanner'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ConfiguracoesPage() {
-  const usuarios = await getResumoUsuarios()
+  const [usuarios, banners] = await Promise.all([
+    getResumoUsuarios(),
+    getBannersAdmin(),
+  ])
 
   return (
     <div className="flex flex-col gap-5">
@@ -33,6 +37,19 @@ export default async function ConfiguracoesPage() {
         <p className="mt-2 text-xs font-bold" style={{ color: 'var(--text-3)' }}>
           Qualquer outro usuário é redirecionado automaticamente para o app.
         </p>
+      </section>
+
+      {/* ── Banner Global ─────────────────────────────────── */}
+      <section className="card">
+        <div className="mb-3 flex items-center gap-2">
+          <MegaphoneSimple size={22} weight="fill" color="var(--duo-blue)" />
+          <h2 className="text-lg font-black" style={{ color: 'var(--text-1)' }}>Banner global</h2>
+        </div>
+        <p className="mb-4 text-sm font-bold" style={{ color: 'var(--text-2)' }}>
+          Exibe uma mensagem no topo do app para todos os usuários.
+          Útil para avisos de manutenção, atualizações ou recados gerais.
+        </p>
+        <GerenciarBanner banners={banners} />
       </section>
 
       {/* ── Dados ────────────────────────────────────────── */}

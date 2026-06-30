@@ -7,6 +7,7 @@ export interface UsuarioResumo {
   criado_em: string
   ultimo_acesso: string | null
   total_acessos: number
+  desativado: boolean
   email: string | null
   last_sign_in_at: string | null
   streak_atual: number
@@ -29,6 +30,22 @@ export interface MetricasModulos {
 export interface AcessoPorDia {
   dia: string // YYYY-MM-DD
   total: number
+}
+
+export interface TimelineUsuario {
+  ultimo_checkin: string | null
+  ultima_leitura: string | null
+  ultima_resposta: string | null
+  ultimo_inventario: string | null
+  ultimo_humor: string | null
+}
+
+export interface BannerAdmin {
+  id: string
+  mensagem: string
+  tipo: string
+  ativo: boolean
+  criado_em: string
 }
 
 /** Resumo agregado de todos os usuários (uma linha por usuário). */
@@ -91,7 +108,6 @@ export async function getAcessosPorDia(dias = 30): Promise<AcessoPorDia[]> {
     return []
   }
 
-  // Inicializa todos os dias com 0 para um gráfico contínuo.
   const mapa = new Map<string, number>()
   for (let i = 0; i < dias; i++) {
     const d = new Date(desde)
@@ -176,4 +192,51 @@ export async function getHistoricoNotificacoes(limite = 30): Promise<Notificacao
     return []
   }
   return (data ?? []) as NotificacaoEnviada[]
+}
+
+/** Última atividade por módulo de um usuário específico. */
+export async function getTimelineUsuario(id: string): Promise<TimelineUsuario> {
+  const supabase = createAdminClient()
+
+  const [checkin, leitura, resposta, inventario, humor] = await Promise.all([
+    supabase.from('checkins_reuniao').select('data').eq('usuario_id', id)
+      .order('data', { ascending: false }).limit(1).maybeSingle(),
+    supabase.from('leituras_spj').select('data').eq('usuario_id', id)
+      .order('data', { ascending: false }).limit(1).maybeSingle(),
+    supabase.from('respostas_passos').select('criado_em').eq('usuario_id', id)
+      .order('criado_em', { ascending: false }).limit(1).maybeSingle(),
+    supabase.from('inventarios_diarios').select('data').eq('usuario_id', id)
+      .order('data', { ascending: false }).limit(1).maybeSingle(),
+    supabase.from('humores_diarios').select('data').eq('usuario_id', id)
+      .order('data', { ascending: false }).limit(1).maybeSingle(),
+  ])
+
+  return {
+    ultimo_checkin: checkin.data?.data ?? null,
+    ultima_leitura: leitura.data?.data ?? null,
+    ultima_resposta: resposta.data?.criado_em ?? null,
+    ultimo_inventario: inventario.data?.data ?? null,
+    ultimo_humor: humor.data?.data ?? null,
+  }
+}
+
+/** Quantidade de subscriptions de push ativas de um usuário. */
+export async function getPushStatusUsuario(id: string): Promise<number> {
+  const supabase = createAdminClient()
+  const { count } = await supabase
+    .from('push_subscriptions')
+    .select('*', { count: 'exact', head: true })
+    .eq('usuario_id', id)
+  return count ?? 0
+}
+
+/** Todos os banners (para o painel admin — sem filtro de ativo). */
+export async function getBannersAdmin(): Promise<BannerAdmin[]> {
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('banners_globais')
+    .select('*')
+    .order('criado_em', { ascending: false })
+  if (error) return []
+  return (data ?? []) as BannerAdmin[]
 }
