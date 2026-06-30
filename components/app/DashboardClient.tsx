@@ -38,7 +38,7 @@ const DIAS_SEMANA_SHORT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 
 function getFichaColor(anos: number, meses: number): { color: string; bg: string; border: string } {
   const m = anos * 12 + meses
-  if (m >= 24) return { color: '#1a1a1a',   bg: 'rgba(26,26,26,0.12)',    border: '#1a1a1a' }   // preta
+  if (m >= 24) return { color: '#ffffff',   bg: '#111111',                border: '#444444' }   // preta
   if (m >= 18) return { color: '#6b7280',   bg: 'rgba(107,114,128,0.12)', border: '#6b7280' }   // cinza
   if (m >= 12) return { color: '#b8ff00',   bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00' }   // neon
   if (m >= 9)  return { color: '#f59e0b',   bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b' }   // amarela
