@@ -21,7 +21,9 @@ CREATE POLICY "leitura_banners_ativos" ON banners_globais
   FOR SELECT TO authenticated USING (ativo = TRUE);
 
 -- Atualiza a view admin_usuarios_resumo para incluir a coluna desativado
-CREATE OR REPLACE VIEW admin_usuarios_resumo AS
+-- DROP necessário porque CREATE OR REPLACE não permite mudar ordem de colunas
+DROP VIEW IF EXISTS admin_usuarios_resumo;
+CREATE VIEW admin_usuarios_resumo AS
 SELECT
   p.id,
   p.nome,
