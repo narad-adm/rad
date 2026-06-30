@@ -43,7 +43,7 @@ function getFichaColor(anos: number, meses: number, isDark: boolean): { color: s
     : { color: '#1a1a1a', bg: 'rgba(26,26,26,0.08)', border: '#1a1a1a', shadow: '0 3px 0 #1a1a1a' }
   if (m >= 18) return { color: '#6b7280', bg: 'rgba(107,114,128,0.12)', border: '#6b7280', shadow: '0 3px 0 #4b5563' }
   if (m >= 12) return { color: '#b8ff00', bg: 'rgba(184,255,0,0.12)',   border: '#b8ff00', shadow: '0 3px 0 #7acc00' }
-  if (m >= 9)  return { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)',  border: '#f59e0b', shadow: '0 3px 0 #b45309' }
+  if (m >= 9)  return { color: '#facc15', bg: 'rgba(250,204,21,0.12)',  border: '#facc15', shadow: '0 3px 0 #ca8a04' }
   if (m >= 6)  return { color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  border: '#3b82f6', shadow: '0 3px 0 #1d4ed8' }
   if (m >= 3)  return { color: '#ef4444', bg: 'rgba(239,68,68,0.12)',   border: '#ef4444', shadow: '0 3px 0 #b91c1c' }
   if (m >= 2)  return { color: '#22c55e', bg: 'rgba(34,197,94,0.12)',   border: '#22c55e', shadow: '0 3px 0 #15803d' }
