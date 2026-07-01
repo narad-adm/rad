@@ -82,12 +82,11 @@ export default function RelatoriosClient({
   const [inventarioAberto, setInventarioAberto] = useState<InventarioAberto | null>(null)
   const [inventarioLoading, setInventarioLoading] = useState(false)
 
-  async function navegarMes(delta: number) {
-    let novoMes = calMes + delta
-    let novoAno = calAno
-    if (novoMes < 0) { novoMes = 11; novoAno-- }
-    if (novoMes > 11) { novoMes = 0; novoAno++ }
+  // ── Seletor de mês/ano ──────────────────────────────
+  const [seletorAberto, setSeletorAberto] = useState(false)
+  const [seletorAno, setSeletorAno] = useState(calAno)
 
+  async function irParaMes(novoAno: number, novoMes: number) {
     // Não navegar para o futuro
     const agora = new Date()
     if (novoAno > agora.getFullYear() || (novoAno === agora.getFullYear() && novoMes > agora.getMonth())) return
@@ -99,6 +98,24 @@ export default function RelatoriosClient({
     setCalHumores(dados.humores)
     setCalInventarios(new Set(dados.diasComInventario))
     setCalLoading(false)
+  }
+
+  async function navegarMes(delta: number) {
+    let novoMes = calMes + delta
+    let novoAno = calAno
+    if (novoMes < 0) { novoMes = 11; novoAno-- }
+    if (novoMes > 11) { novoMes = 0; novoAno++ }
+    await irParaMes(novoAno, novoMes)
+  }
+
+  function abrirSeletor() {
+    setSeletorAno(calAno)
+    setSeletorAberto(true)
+  }
+
+  async function selecionarMesAno(mes: number) {
+    setSeletorAberto(false)
+    await irParaMes(seletorAno, mes)
   }
 
   async function handleDiaClick(dataStr: string) {
@@ -202,12 +219,18 @@ export default function RelatoriosClient({
             <CaretLeft size={14} weight="bold" />
           </button>
 
-          <div style={{ textAlign: 'center' }}>
+          <button
+            onClick={abrirSeletor}
+            style={{
+              textAlign: 'center', background: 'none', border: 'none',
+              cursor: 'pointer', padding: '2px 10px', borderRadius: 10,
+            }}
+          >
             <p style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-1)', lineHeight: 1.2 }}>
               {MESES_PT[calMes]}
             </p>
             <p style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-3)' }}>{calAno}</p>
-          </div>
+          </button>
 
           <button
             onClick={() => navegarMes(1)}
@@ -436,6 +459,108 @@ export default function RelatoriosClient({
             ))}
           </div>
         </div>
+      )}
+
+      {/* ── Bottom sheet: seletor de mês/ano ───────────── */}
+      {seletorAberto && (
+        <>
+          <div
+            onClick={() => setSeletorAberto(false)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 200,
+              background: 'rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(4px)',
+            }}
+          />
+
+          <div style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0,
+            zIndex: 201,
+            background: 'var(--bg-card)',
+            borderRadius: '20px 20px 0 0',
+            border: '2px solid var(--border)',
+            borderBottom: 'none',
+            padding: '0.75rem 1.25rem 2rem',
+          }}>
+            <div style={{
+              width: 36, height: 4, borderRadius: 2,
+              background: 'var(--border)', margin: '0 auto 1rem',
+            }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <p style={{ fontWeight: 900, fontSize: '1rem', color: 'var(--text-1)' }}>Selecionar mês</p>
+              <button
+                onClick={() => setSeletorAberto(false)}
+                style={{
+                  width: 32, height: 32, borderRadius: 8,
+                  border: '1.5px solid var(--border)',
+                  background: 'var(--bg-card-2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: 'var(--text-2)',
+                }}
+              >
+                <X size={14} weight="bold" />
+              </button>
+            </div>
+
+            {/* Navegação de ano */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', marginBottom: '1.25rem' }}>
+              <button
+                onClick={() => setSeletorAno(a => a - 1)}
+                style={{
+                  width: 32, height: 32, borderRadius: 8, border: '1.5px solid var(--border)',
+                  background: 'var(--bg-card-2)', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', cursor: 'pointer', color: 'var(--text-2)',
+                }}
+              >
+                <CaretLeft size={14} weight="bold" />
+              </button>
+              <p style={{ fontWeight: 900, fontSize: '1.1rem', color: 'var(--text-1)', minWidth: 60, textAlign: 'center' }}>
+                {seletorAno}
+              </p>
+              <button
+                onClick={() => setSeletorAno(a => a + 1)}
+                disabled={seletorAno >= agora.getFullYear()}
+                style={{
+                  width: 32, height: 32, borderRadius: 8, border: '1.5px solid var(--border)',
+                  background: 'var(--bg-card-2)', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: seletorAno >= agora.getFullYear() ? 'default' : 'pointer',
+                  color: seletorAno >= agora.getFullYear() ? 'var(--border)' : 'var(--text-2)',
+                }}
+              >
+                <CaretRight size={14} weight="bold" />
+              </button>
+            </div>
+
+            {/* Grid de meses */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem' }}>
+              {MESES_PT.map((nomeMes, idx) => {
+                const futuro = seletorAno > agora.getFullYear() || (seletorAno === agora.getFullYear() && idx > agora.getMonth())
+                const selecionado = seletorAno === calAno && idx === calMes
+                return (
+                  <button
+                    key={nomeMes}
+                    onClick={() => !futuro && selecionarMesAno(idx)}
+                    disabled={futuro}
+                    style={{
+                      borderRadius: 12,
+                      padding: '0.625rem 0.25rem',
+                      background: selecionado ? 'var(--duo-blue-bg)' : 'var(--bg-card-2)',
+                      border: `1.5px solid ${selecionado ? 'var(--duo-blue)' : 'var(--border)'}`,
+                      cursor: futuro ? 'default' : 'pointer',
+                      opacity: futuro ? 0.35 : 1,
+                      fontSize: '0.8rem', fontWeight: 700,
+                      color: selecionado ? 'var(--duo-blue)' : 'var(--text-2)',
+                    }}
+                  >
+                    {nomeMes.slice(0, 3)}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </>
       )}
 
       {/* ── Bottom sheet: inventário ───────────────────── */}
